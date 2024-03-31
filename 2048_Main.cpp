@@ -170,7 +170,28 @@ void printUI(int **a, int n)
         cout << endl;
     }
 }
-
+int countEmptyPosition(int **a, int n)
+{
+    int count = 0;
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            if (a[i][j] == 0)
+                count++;
+    return count;
+}
+bool isGameEnded(int **a, int n)
+{
+    if (countEmptyPosition(a, n) > 0)
+        return false;
+    else
+    {
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n - 1; j++)
+                if (a[i][j] == a[i][j + 1] || a[j][i] == a[j + 1][i])
+                    return false;
+    }
+    return true;
+}
 void deletePoiter(int **&a, int n)
 {
     for (int i = 0; i < n; i++)
@@ -200,7 +221,7 @@ int main()
             break;
         int pos3 = rand() % n;
         int pos4 = rand() % n;
-        while (a[pos3][pos4] != 0)
+        while (a[pos3][pos4] != 0 && countEmptyPosition(a, n) > 0)
         {
             pos3 = rand() % n;
             pos4 = rand() % n;
@@ -208,6 +229,11 @@ int main()
         a[pos3][pos4] = 2;
         printUI(a, n);
         cout << endl;
+        if (isGameEnded(a, n) == true)
+        {
+            cout << "GameOver" << endl;
+            break;
+        }
     }
     moveRight(a, n);
     printUI(a, n);
