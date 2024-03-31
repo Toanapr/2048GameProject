@@ -1,8 +1,5 @@
-#include <iostream>
-#include <iomanip>
-#include <cstdlib>
-#include <ctime>
-using namespace std;
+#include "2048.h"
+#include "undoButton.h"
 
 void random(int **a, int n)
 {
@@ -222,10 +219,15 @@ int main()
     printUI(a, n);
     char x;
     bool canMove = false;
+
+    List l;
+    createList(l);
     while (true)
     {
         cin >> x;
         canMove = false;
+        Node *temp = createNode(a, n);
+        addHead(l, temp);
         if (x == 'w')
             moveUp(a, n, canMove);
         if (x == 's')
@@ -234,6 +236,13 @@ int main()
             moveLeft(a, n, canMove);
         if (x == 'd')
             moveRight(a, n, canMove);
+        if (x == 'z')
+        {
+            a = l.pHead->matrix;
+            deleteHead(l);
+            printUI(a, n);
+            continue;
+        }
         if (x == 'q')
             break;
         if (canMove == true)
@@ -255,6 +264,7 @@ int main()
             break;
         }
     }
+    // printList(l);
     deletePoiter(a, n);
     return 0;
 }

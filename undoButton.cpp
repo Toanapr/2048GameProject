@@ -5,12 +5,12 @@ void createList(List &l)
     l.pHead = new Node;
     l.pHead = NULL;
 }
-Node *createNode(int n)
+Node *createNode(int **a, int n)
 {
     Node *temp = new Node;
-    // temp->matrix = allocateMatrix(n);
-    // temp->matrix = a;
-    temp->n = n;
+    temp->matrix = allocateMatrix(n);
+    temp->matrix = a;
+    // temp->n = n;
     temp->pNext = NULL;
     return temp;
 }
@@ -50,7 +50,8 @@ void printList(List &l)
         return;
     while (temp != NULL)
     {
-        cout << temp->n << endl;
+        // cout << temp->n << endl;
+        printUI(temp->matrix, 4);
         temp = temp->pNext;
     }
 }
@@ -68,24 +69,4 @@ void deleteList(List &l)
         }
     }
     delete l.pHead;
-}
-int main()
-{
-    List l;
-    createList(l);
-    Node *a1 = createNode(1);
-    Node *a2 = createNode(2);
-    Node *a3 = createNode(3);
-    addHead(l, a1);
-    addHead(l, a2);
-    addHead(l, a3);
-    printList(l);
-    // deleteHead(l);
-    // deleteHead(l);
-    // deleteHead(l);
-    deleteList(l);
-    cout << l.pHead;
-
-    // printList(l);
-    return 0;
 }

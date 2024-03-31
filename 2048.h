@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <ctime>
 
+
 using namespace std;
 
 void random(int **a, int n);
