@@ -40,20 +40,21 @@ void swap(int *a, int *b)
     *a = *b;
     *b = temp;
 }
-void move(int **a, int n, int index, bool isRow)
+// void move(int **a, int n, int index, bool isRow)
+// {
+//     if (!isRow)
+//     {
+//         for (int i = 0; i < n; i++)
+//         {
+//             int temp = i + 1;
+//             while (a[i][index])
+//                 ;
+//         }
+//     }
+// }
+void moveLeft(int **a, int n, bool &canMove)
 {
-    if (!isRow)
-    {
-        for (int i = 0; i < n; i++)
-        {
-            int temp = i + 1;
-            while (a[i][index])
-                ;
-        }
-    }
-}
-void moveLeft(int **a, int n)
-{
+    canMove = false;
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
@@ -69,17 +70,20 @@ void moveLeft(int **a, int n)
             {
                 swap(&a[i][j], &a[i][temp]);
                 j--;
+                canMove = true;
             }
-            if (a[i][j] == a[i][temp])
+            else if (a[i][j] == a[i][temp])
             {
                 a[i][j] *= 2;
                 a[i][temp] = 0;
+                canMove = true;
             }
         }
     }
 }
-void moveRight(int **a, int n)
+void moveRight(int **a, int n, bool &canMove)
 {
+    canMove = false;
     for (int i = 0; i < n; i++)
     {
         for (int j = n - 1; j >= 0; j--)
@@ -95,17 +99,20 @@ void moveRight(int **a, int n)
             {
                 swap(&a[i][j], &a[i][temp]);
                 j++;
+                canMove = true;
             }
-            if (a[i][j] == a[i][temp])
+            else if (a[i][j] == a[i][temp])
             {
                 a[i][j] *= 2;
                 a[i][temp] = 0;
+                canMove = true;
             }
         }
     }
 }
-void moveDown(int **a, int n)
+void moveDown(int **a, int n, bool &canMove)
 {
+    canMove = false;
     for (int i = 0; i < n; i++)
     {
         for (int j = n - 1; j >= 0; j--)
@@ -121,17 +128,20 @@ void moveDown(int **a, int n)
             {
                 swap(&a[j][i], &a[temp][i]);
                 j++;
+                canMove = true;
             }
             else if (a[j][i] == a[temp][i])
             {
                 a[j][i] *= 2;
                 a[temp][i] = 0;
+                canMove = true;
             }
         }
     }
 }
-void moveUp(int **a, int n)
+void moveUp(int **a, int n, bool &canMove)
 {
+    canMove = false;
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
@@ -147,11 +157,13 @@ void moveUp(int **a, int n)
             {
                 swap(&a[j][i], &a[temp][i]);
                 j--;
+                canMove = true;
             }
             else if (a[j][i] == a[temp][i])
             {
                 a[j][i] *= 2;
                 a[temp][i] = 0;
+                canMove = true;
             }
         }
     }
@@ -198,6 +210,9 @@ void deletePoiter(int **&a, int n)
         delete[] a[i];
     delete a;
 }
+void gameStart()
+{
+}
 int main()
 {
     int **a;
@@ -206,27 +221,32 @@ int main()
     creatNewGame(a, n);
     printUI(a, n);
     char x;
+    bool canMove = false;
     while (true)
     {
         cin >> x;
+        canMove = false;
         if (x == 'w')
-            moveUp(a, n);
+            moveUp(a, n, canMove);
         if (x == 's')
-            moveDown(a, n);
+            moveDown(a, n, canMove);
         if (x == 'a')
-            moveLeft(a, n);
+            moveLeft(a, n, canMove);
         if (x == 'd')
-            moveRight(a, n);
+            moveRight(a, n, canMove);
         if (x == 'q')
             break;
-        int pos3 = rand() % n;
-        int pos4 = rand() % n;
-        while (a[pos3][pos4] != 0 && countEmptyPosition(a, n) > 0)
+        if (canMove == true)
         {
-            pos3 = rand() % n;
-            pos4 = rand() % n;
+            int pos3 = rand() % n;
+            int pos4 = rand() % n;
+            while (a[pos3][pos4] != 0 && countEmptyPosition(a, n) > 0)
+            {
+                pos3 = rand() % n;
+                pos4 = rand() % n;
+            }
+            a[pos3][pos4] = 2;
         }
-        a[pos3][pos4] = 2;
         printUI(a, n);
         cout << endl;
         if (isGameEnded(a, n) == true)
@@ -235,8 +255,6 @@ int main()
             break;
         }
     }
-    moveRight(a, n);
-    printUI(a, n);
     deletePoiter(a, n);
     return 0;
 }
