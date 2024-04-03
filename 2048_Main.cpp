@@ -207,7 +207,8 @@ void deletePoiter(int **&a, int n)
         delete[] a[i];
     delete a;
 }
-void gameStart()
+
+void gameStart(int **&a, int &n, List &l)
 {
 }
 int main()
@@ -217,17 +218,17 @@ int main()
     srand(time(0));
     creatNewGame(a, n);
     printUI(a, n);
+    List l;
+    createList(l);
+    Node *temp = createNode(a, n);
+    addHead(l, temp);
     char x;
     bool canMove = false;
 
-    List l;
-    createList(l);
     while (true)
     {
         cin >> x;
         canMove = false;
-        Node *temp = createNode(a, n);
-        addHead(l, temp);
         if (x == 'w')
             moveUp(a, n, canMove);
         if (x == 's')
@@ -238,8 +239,8 @@ int main()
             moveRight(a, n, canMove);
         if (x == 'z')
         {
-            a = l.pHead->matrix;
             deleteHead(l);
+            a = l.pHead->matrix;
             printUI(a, n);
             continue;
         }
@@ -256,6 +257,8 @@ int main()
             }
             a[pos3][pos4] = 2;
         }
+        temp = createNode(a, n);
+        addHead(l, temp);
         printUI(a, n);
         cout << endl;
         if (isGameEnded(a, n) == true)

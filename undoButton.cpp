@@ -5,11 +5,17 @@ void createList(List &l)
     l.pHead = new Node;
     l.pHead = NULL;
 }
+void copyMatrix(int **a, int **&b, int n)
+{
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            b[i][j] = a[i][j];
+}
 Node *createNode(int **a, int n)
 {
     Node *temp = new Node;
     temp->matrix = allocateMatrix(n);
-    temp->matrix = a;
+    copyMatrix(a, temp->matrix, n);
     // temp->n = n;
     temp->pNext = NULL;
     return temp;
@@ -29,13 +35,8 @@ void addHead(List &l, Node *nodeAdd)
 }
 void deleteHead(List &l)
 {
-    if (l.pHead == NULL)
+    if (l.pHead->pNext == NULL)
         return;
-    else if (l.pHead->pNext == NULL)
-    {
-        delete l.pHead;
-        l.pHead = NULL;
-    }
     else
     {
         Node *temp = l.pHead;
@@ -43,18 +44,18 @@ void deleteHead(List &l)
         delete temp;
     }
 }
-void printList(List &l)
-{
-    Node *temp = l.pHead;
-    if (temp == NULL)
-        return;
-    while (temp != NULL)
-    {
-        // cout << temp->n << endl;
-        printUI(temp->matrix, 4);
-        temp = temp->pNext;
-    }
-}
+// void printList(List &l)
+// {
+//     Node *temp = l.pHead;
+//     if (temp == NULL)
+//         return;
+//     while (temp != NULL)
+//     {
+//         // cout << temp->n << endl;
+//         printUI(temp->matrix, 4, 0);
+//         temp = temp->pNext;
+//     }
+// }
 void deleteList(List &l)
 {
     if (l.pHead == NULL)
