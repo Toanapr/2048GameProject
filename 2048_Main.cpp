@@ -23,9 +23,10 @@ int **allocateMatrix(int n)
         a[i] = new int[n];
     return a;
 }
-void creatNewGame(int **&a, int &n)
+void creatNewGame(int **&a, int &n, int &score)
 {
     a = allocateMatrix(n);
+    score = 0;
     for (int i = 0; i < n; i++)
         for (int j = 0; j < n; j++)
             a[i][j] = 0;
@@ -49,7 +50,7 @@ void swap(int *a, int *b)
 //         }
 //     }
 // }
-void moveLeft(int **a, int n, bool &canMove)
+void moveLeft(int **a, int n, bool &canMove, int &score)
 {
     canMove = false;
     for (int i = 0; i < n; i++)
@@ -74,11 +75,12 @@ void moveLeft(int **a, int n, bool &canMove)
                 a[i][j] *= 2;
                 a[i][temp] = 0;
                 canMove = true;
+                score += a[i][j];
             }
         }
     }
 }
-void moveRight(int **a, int n, bool &canMove)
+void moveRight(int **a, int n, bool &canMove, int &score)
 {
     canMove = false;
     for (int i = 0; i < n; i++)
@@ -103,11 +105,12 @@ void moveRight(int **a, int n, bool &canMove)
                 a[i][j] *= 2;
                 a[i][temp] = 0;
                 canMove = true;
+                score += a[i][j];
             }
         }
     }
 }
-void moveDown(int **a, int n, bool &canMove)
+void moveDown(int **a, int n, bool &canMove, int &score)
 {
     canMove = false;
     for (int i = 0; i < n; i++)
@@ -132,11 +135,12 @@ void moveDown(int **a, int n, bool &canMove)
                 a[j][i] *= 2;
                 a[temp][i] = 0;
                 canMove = true;
+                score += a[j][i];
             }
         }
     }
 }
-void moveUp(int **a, int n, bool &canMove)
+void moveUp(int **a, int n, bool &canMove, int &score)
 {
     canMove = false;
     for (int i = 0; i < n; i++)
@@ -161,12 +165,14 @@ void moveUp(int **a, int n, bool &canMove)
                 a[j][i] *= 2;
                 a[temp][i] = 0;
                 canMove = true;
+                score += a[j][i];
             }
         }
     }
 }
-void printUI(int **a, int n)
+void printUI(int **a, int n, int score)
 {
+    cout << "Score: " << score << endl;
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
@@ -215,12 +221,13 @@ int main()
 {
     int **a;
     int n = 4;
+    int score;
     srand(time(0));
-    creatNewGame(a, n);
-    printUI(a, n);
+    creatNewGame(a, n, score);
+    printUI(a, n, score);
     List l;
     createList(l);
-    Node *temp = createNode(a, n);
+    Node *temp = createNode(a, n, score);
     addHead(l, temp);
     char x;
     bool canMove = false;
@@ -230,18 +237,18 @@ int main()
         cin >> x;
         canMove = false;
         if (x == 'w')
-            moveUp(a, n, canMove);
+            moveUp(a, n, canMove, score);
         if (x == 's')
-            moveDown(a, n, canMove);
+            moveDown(a, n, canMove, score);
         if (x == 'a')
-            moveLeft(a, n, canMove);
+            moveLeft(a, n, canMove, score);
         if (x == 'd')
-            moveRight(a, n, canMove);
+            moveRight(a, n, canMove, score);
         if (x == 'z')
         {
             deleteHead(l);
             a = l.pHead->matrix;
-            printUI(a, n);
+            printUI(a, n, score);
             continue;
         }
         if (x == 'q')
@@ -257,9 +264,9 @@ int main()
             }
             a[pos3][pos4] = 2;
         }
-        temp = createNode(a, n);
+        temp = createNode(a, n, score);
         addHead(l, temp);
-        printUI(a, n);
+        printUI(a, n, score);
         cout << endl;
         if (isGameEnded(a, n) == true)
         {

@@ -11,12 +11,13 @@ void copyMatrix(int **a, int **&b, int n)
         for (int j = 0; j < n; j++)
             b[i][j] = a[i][j];
 }
-Node *createNode(int **a, int n)
+Node *createNode(int **a, int n, int score)
 {
     Node *temp = new Node;
     temp->matrix = allocateMatrix(n);
+    // temp->score = new int;
+    temp->score = score;
     copyMatrix(a, temp->matrix, n);
-    // temp->n = n;
     temp->pNext = NULL;
     return temp;
 }
