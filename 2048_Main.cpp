@@ -248,6 +248,7 @@ int main()
         {
             deleteHead(l);
             a = l.pHead->matrix;
+            score = l.pHead->score;
             printUI(a, n, score);
             continue;
         }
