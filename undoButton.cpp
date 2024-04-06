@@ -15,7 +15,6 @@ Node *createNode(int **a, int n, int score)
 {
     Node *temp = new Node;
     temp->matrix = allocateMatrix(n);
-    // temp->score = new int;
     temp->score = score;
     copyMatrix(a, temp->matrix, n);
     temp->pNext = NULL;
@@ -57,7 +56,13 @@ void deleteHead(List &l)
 //         temp = temp->pNext;
 //     }
 // }
-void deleteList(List &l)
+void deleteMatrix(int **&a, int n)
+{
+    for (int i = 0; i < n; i++)
+        delete[] a[i];
+        delete a;
+}
+void deleteList(List &l, int n)
 {
     if (l.pHead == NULL)
         return;
@@ -68,6 +73,7 @@ void deleteList(List &l)
             Node *de = l.pHead;
             l.pHead = l.pHead->pNext;
             delete de;
+            deleteMatrix(de->matrix,n);
         }
     }
     delete l.pHead;

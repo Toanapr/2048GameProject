@@ -207,16 +207,12 @@ bool isGameEnded(int **a, int n)
     }
     return true;
 }
-void deletePoiter(int **&a, int n)
-{
-    for (int i = 0; i < n; i++)
-        delete[] a[i];
-    delete a;
-}
 
 void gameStart(int **&a, int &n, List &l)
 {
+
 }
+
 int main()
 {
     int **a;
