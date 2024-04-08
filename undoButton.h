@@ -15,5 +15,5 @@ void createList(List &l);
 Node *createNode(int **a, int n, int score);
 void addHead(List &l, Node *nodeAdd);
 void deleteHead(List &l);
-void printList(List &l);
-void deleteList(List &l);
+void deleteList(List &l, int n);
+void deleteMatrix(int **&a, int n);

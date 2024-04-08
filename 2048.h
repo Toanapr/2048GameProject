@@ -5,6 +5,7 @@
 
 using namespace std;
 
+
 void random(int **a, int n);
 int **allocateMatrix(int n);
 void creatNewGame(int **&a, int &n, int &score);
@@ -16,4 +17,3 @@ void moveUp(int **a, int n, bool &canMove, int &score);
 void printUI(int **a, int n, int score);
 int countEmptyPosition(int **a, int n);
 bool isGameEnded(int **a, int n);
-void deletePoiter(int **&a, int n);

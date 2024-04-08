@@ -44,23 +44,12 @@ void deleteHead(List &l)
         delete temp;
     }
 }
-// void printList(List &l)
-// {
-//     Node *temp = l.pHead;
-//     if (temp == NULL)
-//         return;
-//     while (temp != NULL)
-//     {
-//         // cout << temp->n << endl;
-//         printUI(temp->matrix, 4, 0);
-//         temp = temp->pNext;
-//     }
-// }
 void deleteMatrix(int **&a, int n)
 {
     for (int i = 0; i < n; i++)
         delete[] a[i];
-        delete a;
+    delete a;
+    a = NULL;
 }
 void deleteList(List &l, int n)
 {
@@ -73,8 +62,8 @@ void deleteList(List &l, int n)
             Node *de = l.pHead;
             l.pHead = l.pHead->pNext;
             delete de;
-            deleteMatrix(de->matrix,n);
         }
     }
     delete l.pHead;
+    l.pHead = NULL;
 }
