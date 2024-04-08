@@ -1,5 +1,10 @@
 {
-    "files.associations": {
-        "iostream": "cpp"
-    }
+  "files.associations": {
+    "iostream": "cpp",
+    "iomanip": "cpp",
+    "ostream": "cpp",
+    "cstdlib": "cpp",
+    "ctime": "cpp",
+    "cstdio": "cpp"
+  }
 }

@@ -1,7 +1,7 @@
 #include "2048.h"
 #include "undoButton.h"
 
-void placeRandomValueOnEmptyCell(int **&board, int size)
+void placeRandomValueOnEmptyCell(int **board, int size)
 {
     int pos1 = rand() % size;
     int pos2 = rand() % size;
@@ -14,23 +14,23 @@ void placeRandomValueOnEmptyCell(int **&board, int size)
 
     board[pos1][pos2] = 2;
 }
-int **allocateMatrix(int n)
+int **allocateMatrix(int size)
 {
-    n = 4;
-    int **board = new int *[n];
-    for (int i = 0; i < n; i++)
-        board[i] = new int[n];
+    size = 4;
+    int **board = new int *[size];
+    for (int i = 0; i < size; i++)
+        board[i] = new int[size];
     return board;
 }
-void creatNewGame(int **&board, int &n, int &score)
+void creatNewGame(int **&board, int &size, int &score)
 {
-    board = allocateMatrix(n);
+    board = allocateMatrix(size);
     score = 0;
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n; j++)
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
             board[i][j] = 0;
-    placeRandomValueOnEmptyCell(board, n);
-    placeRandomValueOnEmptyCell(board, n);
+    placeRandomValueOnEmptyCell(board, size);
+    placeRandomValueOnEmptyCell(board, size);
 }
 void swap(int *a, int *b)
 {
@@ -38,19 +38,19 @@ void swap(int *a, int *b)
     *a = *b;
     *b = temp;
 }
-void moveLeft(int **board, int n, bool &canMove, int &score)
+void moveLeft(int **board, int size, bool &canMove, int &score)
 {
     canMove = false;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < size; i++)
     {
-        for (int j = 0; j < n; j++)
+        for (int j = 0; j < size; j++)
         {
             int temp = j + 1;
-            while (temp < n && board[i][temp] == 0)
+            while (temp < size && board[i][temp] == 0)
             {
                 temp++;
             }
-            if (temp >= n)
+            if (temp >= size)
                 break;
             if (board[i][j] == 0)
             {
@@ -68,12 +68,12 @@ void moveLeft(int **board, int n, bool &canMove, int &score)
         }
     }
 }
-void moveRight(int **board, int n, bool &canMove, int &score)
+void moveRight(int **board, int size, bool &canMove, int &score)
 {
     canMove = false;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < size; i++)
     {
-        for (int j = n - 1; j >= 0; j--)
+        for (int j = size - 1; j >= 0; j--)
         {
             int temp = j - 1;
             while (temp >= 0 && board[i][temp] == 0)
@@ -98,12 +98,12 @@ void moveRight(int **board, int n, bool &canMove, int &score)
         }
     }
 }
-void moveDown(int **board, int n, bool &canMove, int &score)
+void moveDown(int **board, int size, bool &canMove, int &score)
 {
     canMove = false;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < size; i++)
     {
-        for (int j = n - 1; j >= 0; j--)
+        for (int j = size - 1; j >= 0; j--)
         {
             int temp = j - 1;
             while (temp >= 0 && board[temp][i] == 0)
@@ -128,19 +128,19 @@ void moveDown(int **board, int n, bool &canMove, int &score)
         }
     }
 }
-void moveUp(int **board, int n, bool &canMove, int &score)
+void moveUp(int **board, int size, bool &canMove, int &score)
 {
     canMove = false;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < size; i++)
     {
-        for (int j = 0; j < n; j++)
+        for (int j = 0; j < size; j++)
         {
             int temp = j + 1;
-            while (temp < n && board[temp][i] == 0)
+            while (temp < size && board[temp][i] == 0)
             {
                 temp++;
             }
-            if (temp >= n)
+            if (temp >= size)
                 break;
             if (board[j][i] == 0)
             {
@@ -158,48 +158,53 @@ void moveUp(int **board, int n, bool &canMove, int &score)
         }
     }
 }
-void printUI(int **board, int n, int score)
+void printUI(int **board, int size, int score)
 {
+    Sleep(150);
     if (board == NULL)
         return;
     cout << "Score: " << score << endl;
-    for (int i = 0; i < n; i++)
+    cout << setw(4) << "+-----+-----+-----+-----+" << endl;
+    for (int i = 0; i < size; i++)
     {
-        for (int j = 0; j < n; j++)
+        for (int j = 0; j < size; j++)
         {
             if (board[i][j] != 0)
-                cout << setw(4) << board[i][j] << " ";
+                cout << "|" << setw(3) << board[i][j] << "  ";
             else
-                cout << setw(4) << '.' << " ";
+                cout << "|" << setw(3) << '.' << "  ";
         }
+        cout << "|";
+        cout << endl;
+        for (int k = 0; k < size; k++)
+        {
+            cout << "+-----";
+        }
+        cout << "+";
         cout << endl;
     }
 }
-int countEmptyPosition(int **board, int n)
+int countEmptyPosition(int **board, int size)
 {
     int count = 0;
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n; j++)
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
             if (board[i][j] == 0)
                 count++;
     return count;
 }
-bool isGameEnded(int **board, int n)
+bool isGameEnded(int **board, int size)
 {
-    if (countEmptyPosition(board, n) > 0)
+    if (countEmptyPosition(board, size) > 0)
         return false;
     else
     {
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n - 1; j++)
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size - 1; j++)
                 if (board[i][j] == board[i][j + 1] || board[j][i] == board[j + 1][i])
                     return false;
     }
     return true;
-}
-
-void gameStart(int **&board, int &n, List &undo)
-{
 }
 
 void initializeGame(List &undo, int **&board, int &size, int &score)
@@ -216,14 +221,15 @@ void undoProcess(List &undo, int **&board, int size, int &score)
     board = undo.pHead->matrix;
     score = undo.pHead->score;
 }
-void playGame(List &undo, int **&board, int size, int &score)
+void playGame(List &undo, int **board, int size, int &score)
 {
     char x;
     bool canMove = false;
 
     while (true)
     {
-        cin >> x;
+        // cin >> x;
+        x = getch();
         canMove = false;
         if (x == 'q')
             break;
@@ -238,15 +244,17 @@ void playGame(List &undo, int **&board, int size, int &score)
         if (x == 'z')
         {
             undoProcess(undo, board, size, score);
+            system("cls");
             printUI(board, size, score);
             continue;
         }
         if (canMove == true)
         {
             placeRandomValueOnEmptyCell(board, size);
+            Node *temp = createNode(board, size, score);
+            addHead(undo, temp);
         }
-        Node *temp = createNode(board, size, score);
-        addHead(undo, temp);
+        system("cls");
         printUI(board, size, score);
         cout << endl;
         if (isGameEnded(board, size) == true)
@@ -260,15 +268,15 @@ void playGame(List &undo, int **&board, int size, int &score)
 int main()
 {
     int **board;
-    int n = 4;
+    int size = 4;
     int score;
     srand(time(0));
     List undo;
-    initializeGame(undo, board, n, score);
+    initializeGame(undo, board, size, score);
 
-    playGame(undo, board, n, score);
+    playGame(undo, board, size, score);
 
-    deleteMatrix(board, n);
-    deleteList(undo, n);
+    deleteMatrix(board, size);
+    deleteList(undo, size);
     return 0;
 }
