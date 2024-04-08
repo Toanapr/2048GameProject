@@ -1,19 +1,18 @@
 #include "2048.h"
 #include "undoButton.h"
 
-void random(int **board, int n)
+void placeRandomValueOnEmptyCell(int **&board, int size)
 {
-    int pos1 = rand() % n;
-    int pos2 = rand() % n;
-    board[pos1][pos2] = 2;
-    int pos3;
-    int pos4;
-    do
+    int pos1 = rand() % size;
+    int pos2 = rand() % size;
+
+    while (board[pos1][pos2] != 0 && countEmptyPosition(board, size) > 0)
     {
-        pos3 = rand() % n;
-        pos4 = rand() % n;
-        board[pos3][pos4] = 2;
-    } while (pos1 == pos3 && pos2 == pos4);
+        pos1 = rand() % size;
+        pos2 = rand() % size;
+    }
+
+    board[pos1][pos2] = 2;
 }
 int **allocateMatrix(int n)
 {
@@ -30,7 +29,8 @@ void creatNewGame(int **&board, int &n, int &score)
     for (int i = 0; i < n; i++)
         for (int j = 0; j < n; j++)
             board[i][j] = 0;
-    random(board, n);
+    placeRandomValueOnEmptyCell(board, n);
+    placeRandomValueOnEmptyCell(board, n);
 }
 void swap(int *a, int *b)
 {
@@ -38,18 +38,6 @@ void swap(int *a, int *b)
     *a = *b;
     *b = temp;
 }
-// void move(int **board, int n, int index, bool isRow)
-// {
-//     if (!isRow)
-//     {
-//         for (int i = 0; i < n; i++)
-//         {
-//             int temp = i + 1;
-//             while (board[i][index])
-//                 ;
-//         }
-//     }
-// }
 void moveLeft(int **board, int n, bool &canMove, int &score)
 {
     canMove = false;
@@ -222,15 +210,14 @@ void initializeGame(List &undo, int **&board, int &size, int &score)
     Node *temp = createNode(board, size, score);
     addHead(undo, temp);
 }
-int main()
+void undoProcess(List &undo, int **&board, int size, int &score)
 {
-    int **board;
-    int n = 4;
-    int score;
-    srand(time(0));
-    List undo;
-    initializeGame(undo, board, n, score);
-
+    deleteHead(undo);
+    board = undo.pHead->matrix;
+    score = undo.pHead->score;
+}
+void playGame(List &undo, int **&board, int size, int &score)
+{
     char x;
     bool canMove = false;
 
@@ -241,42 +228,45 @@ int main()
         if (x == 'q')
             break;
         if (x == 'w')
-            moveUp(board, n, canMove, score);
+            moveUp(board, size, canMove, score);
         if (x == 's')
-            moveDown(board, n, canMove, score);
+            moveDown(board, size, canMove, score);
         if (x == 'a')
-            moveLeft(board, n, canMove, score);
+            moveLeft(board, size, canMove, score);
         if (x == 'd')
-            moveRight(board, n, canMove, score);
+            moveRight(board, size, canMove, score);
         if (x == 'z')
         {
-            deleteHead(undo);
-            board = undo.pHead->matrix;
-            score = undo.pHead->score;
-            printUI(board, n, score);
+            undoProcess(undo, board, size, score);
+            printUI(board, size, score);
             continue;
         }
         if (canMove == true)
         {
-            int pos3 = rand() % n;
-            int pos4 = rand() % n;
-            while (board[pos3][pos4] != 0 && countEmptyPosition(board, n) > 0)
-            {
-                pos3 = rand() % n;
-                pos4 = rand() % n;
-            }
-            board[pos3][pos4] = 2;
+            placeRandomValueOnEmptyCell(board, size);
         }
-        Node *temp = createNode(board, n, score);
+        Node *temp = createNode(board, size, score);
         addHead(undo, temp);
-        printUI(board, n, score);
+        printUI(board, size, score);
         cout << endl;
-        if (isGameEnded(board, n) == true)
+        if (isGameEnded(board, size) == true)
         {
             cout << "GameOver" << endl;
             break;
         }
     }
+}
+
+int main()
+{
+    int **board;
+    int n = 4;
+    int score;
+    srand(time(0));
+    List undo;
+    initializeGame(undo, board, n, score);
+
+    playGame(undo, board, n, score);
 
     deleteMatrix(board, n);
     deleteList(undo, n);
