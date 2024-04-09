@@ -222,12 +222,12 @@ void undoProcess(List &undo, int **&board, int size, int &score)
     if (undo.pHead->pNext == NULL)
         return;
     deleteHead(undo);
-    board = undo.pHead->matrix;
+    copyMatrix(undo.pHead->matrix, board, size);
     score = undo.pHead->score;
 }
 void playGame(List &undo, int **board, int size, int &score, char &choice)
 {
-    char x, copy_x;
+    char x;
     bool canMove = false;
 
     while (true)
@@ -252,17 +252,10 @@ void playGame(List &undo, int **board, int size, int &score, char &choice)
         if (x == 'z')
         {
             undoProcess(undo, board, size, score);
-            if (copy_x != x)
-            {
-                Node *temp = createNode(board, size, score);
-                addHead(undo, temp);
-            }
-            // system("cls");
-            // printUI(board, size, score);
-            // continue;
+            system("cls");
+            printUI(board, size, score);
+            continue;
         }
-        copy_x = x;
-        
         if (canMove == true)
         {
             placeRandomValueOnEmptyCell(board, size);

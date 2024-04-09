@@ -20,5 +20,6 @@ void addHead(List &l, Node *nodeAdd);
 void deleteHead(List &l);
 void deleteList(List &l, int n);
 void deleteMatrix(int **&a, int n);
+void copyMatrix(int **a, int **&b, int n);
 
 #endif
