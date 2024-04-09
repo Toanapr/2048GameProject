@@ -1,3 +1,6 @@
+#ifndef _2048_H_
+#define _2048_H_
+
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
@@ -5,6 +8,7 @@
 #include <cstdio>
 #include <conio.h>
 #include <windows.h>
+#include "undoButton.h"
 
 using namespace std;
 
@@ -19,3 +23,9 @@ void printUI(int **board, int size, int score);
 int countEmptyPosition(int **board, int size);
 bool isGameEnded(int **board, int size);
 void placeRandomValueOnEmptyCell(int **board, int size);
+void printUI(int **board, int size, int score);
+void initializeGame(List &undo, int **&board, int &size, int &score);
+void playGame(List &undo, int **board, int size, int &score, char &choice);
+void startMenu(char &choice, int &size);
+
+#endif

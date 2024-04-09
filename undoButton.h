@@ -1,3 +1,6 @@
+#ifndef _UNDOBUTTON_H_
+#define _UNDOBUTTON_H_
+
 #include "2048.h"
 
 struct Node
@@ -17,3 +20,5 @@ void addHead(List &l, Node *nodeAdd);
 void deleteHead(List &l);
 void deleteList(List &l, int n);
 void deleteMatrix(int **&a, int n);
+
+#endif

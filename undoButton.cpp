@@ -1,4 +1,4 @@
-#include "undoButton.h"
+#include "2048.h"
 
 void createList(List &l)
 {
@@ -35,14 +35,11 @@ void addHead(List &l, Node *nodeAdd)
 }
 void deleteHead(List &l)
 {
-    if (l.pHead->pNext == NULL)
+    if (l.pHead == NULL)
         return;
-    else
-    {
-        Node *temp = l.pHead;
-        l.pHead = temp->pNext;
-        delete temp;
-    }
+    Node *temp = l.pHead;
+    l.pHead = l.pHead->pNext;
+    delete temp;
 }
 void deleteMatrix(int **&a, int n)
 {
