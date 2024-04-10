@@ -57,6 +57,7 @@ void deleteList(List &l, int n)
         while (l.pHead != NULL)
         {
             Node *de = l.pHead;
+            deleteMatrix(de->matrix, n);
             l.pHead = l.pHead->pNext;
             delete de;
         }

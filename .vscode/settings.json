@@ -5,6 +5,7 @@
     "ostream": "cpp",
     "cstdlib": "cpp",
     "ctime": "cpp",
-    "cstdio": "cpp"
+    "cstdio": "cpp",
+    "iosfwd": "cpp"
   }
 }

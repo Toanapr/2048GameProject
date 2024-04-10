@@ -9,7 +9,10 @@
 #include <conio.h>
 #include <windows.h>
 #include "undoButton.h"
+#include <fstream>
 
+#define fileBestScore_fi "best_score_in.txt"
+#define fileBestScore_fo "best_score_out.txt"
 using namespace std;
 
 int **allocateMatrix(int size);
@@ -19,13 +22,14 @@ void moveLeft(int **board, int size, bool &canMove, int &score);
 void moveRight(int **board, int size, bool &canMove, int &score);
 void moveDown(int **board, int size, bool &canMove, int &score);
 void moveUp(int **board, int size, bool &canMove, int &score);
-void printUI(int **board, int size, int score);
+void printUI(int **board, int size, int score, int &bestScore);
 int countEmptyPosition(int **board, int size);
 bool isGameEnded(int **board, int size);
 void placeRandomValueOnEmptyCell(int **board, int size);
-void printUI(int **board, int size, int score);
-void initializeGame(List &undo, int **&board, int &size, int &score);
-void playGame(List &undo, int **board, int size, int &score, char &choice);
+void initializeGame(List &undo, int **&board, int &size, int &score, int bestScore);
+void playGame(List &undo, int **board, int size, int &score, int &bestScore, char &choice);
 void startMenu(char &choice, int &size);
+void saveBestScore(fstream &output, int score, int bestScore);
+int getBestScore(fstream &input);
 
 #endif

@@ -1,5 +1,37 @@
 #include "2048.h"
 
+int randomTwoFour()
+{
+    int x = rand() % 10 + 1;
+    if (x <= 8)
+        return 2;
+    else
+        return 4;
+}
+int getBestScore(fstream &input)
+{
+    int hi;
+    input.open(fileBestScore_fo, ios::in);
+    input >> hi;
+    input.close();
+    return hi;
+}
+void saveBestScore(fstream &output, int score, int bestScore)
+{
+    output.open(fileBestScore_fo, ios::out);
+    cout << score << endl;
+    if (score > bestScore)
+        output << score;
+    output.close();
+}
+bool isWinGame(int **board, int size)
+{
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            if (board[i][j] == 2048)
+                return true;
+    return false;
+}
 void placeRandomValueOnEmptyCell(int **board, int size)
 {
     int pos1 = rand() % size;
@@ -11,7 +43,7 @@ void placeRandomValueOnEmptyCell(int **board, int size)
         pos2 = rand() % size;
     }
 
-    board[pos1][pos2] = 2;
+    board[pos1][pos2] = randomTwoFour();
 }
 int **allocateMatrix(int size)
 {
@@ -156,30 +188,31 @@ void moveUp(int **board, int size, bool &canMove, int &score)
         }
     }
 }
-void printUI(int **board, int size, int score)
+void printUI(int **board, int size, int score, int &bestScore)
 {
     Sleep(150);
     if (board == NULL)
         return;
-    cout << "Score: " << score << endl;
+    if (bestScore < score)
+        bestScore = score;
+    cout << "Score: " << score;
+    cout << "\t Best: " << bestScore << endl;
     for (int k = 0; k < size; k++)
-    {
-        cout << "+-----";
-    }
+        cout << "+-------";
     cout << "+" << endl;
     for (int i = 0; i < size; i++)
     {
         for (int j = 0; j < size; j++)
         {
             if (board[i][j] != 0)
-                cout << "|" << setw(3) << board[i][j] << "  ";
+                cout << "|" << setw(4) << board[i][j] << setw(4);
             else
-                cout << "|" << setw(3) << '.' << "  ";
+                cout << "|" << setw(4) << ' ' << setw(4);
         }
         cout << "|" << endl;
         for (int k = 0; k < size; k++)
         {
-            cout << "+-----";
+            cout << "+-------";
         }
         cout << "+" << endl;
     }
@@ -209,10 +242,10 @@ bool isGameEnded(int **board, int size)
     return true;
 }
 
-void initializeGame(List &undo, int **&board, int &size, int &score)
+void initializeGame(List &undo, int **&board, int &size, int &score, int bestScore)
 {
     creatNewGame(board, size, score);
-    printUI(board, size, score);
+    printUI(board, size, score, bestScore);
     createList(undo);
     Node *temp = createNode(board, size, score);
     addHead(undo, temp);
@@ -225,11 +258,10 @@ void undoProcess(List &undo, int **&board, int size, int &score)
     copyMatrix(undo.pHead->matrix, board, size);
     score = undo.pHead->score;
 }
-void playGame(List &undo, int **board, int size, int &score, char &choice)
+void playGame(List &undo, int **board, int size, int &score, int &bestScore, char &choice)
 {
     char x;
     bool canMove = false;
-
     while (true)
     {
         // cin >> x;
@@ -253,7 +285,7 @@ void playGame(List &undo, int **board, int size, int &score, char &choice)
         {
             undoProcess(undo, board, size, score);
             system("cls");
-            printUI(board, size, score);
+            printUI(board, size, score, bestScore);
             continue;
         }
         if (canMove == true)
@@ -263,8 +295,22 @@ void playGame(List &undo, int **board, int size, int &score, char &choice)
             addHead(undo, temp);
         }
         system("cls");
-        printUI(board, size, score);
+        printUI(board, size, score, bestScore);
         cout << endl;
+        if (isWinGame(board, size) == true)
+        {
+            system("cls");
+            cout << "You Win!!" << endl;
+            system("pause");
+            // cout << "Do you want to continue? (press y: yes or n: no)" << endl;
+            // char m;
+            // cin >> m;
+            // if (m == 'y')
+            // continue;
+            // else
+            choice = '2';
+            break;
+        }
         if (isGameEnded(board, size) == true)
         {
             system("cls");
