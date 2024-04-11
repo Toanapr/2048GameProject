@@ -11,17 +11,18 @@ int randomTwoFour()
 int getBestScore(fstream &input)
 {
     int hi;
-    input.open(fileBestScore_fo, ios::in);
+    input.open(fileBestScore, ios::in);
     input >> hi;
     input.close();
     return hi;
 }
 void saveBestScore(fstream &output, int score, int bestScore)
 {
-    output.open(fileBestScore_fo, ios::out);
-    cout << score << endl;
-    if (score > bestScore)
+    output.open(fileBestScore, ios::out);
+    if (score >= bestScore)
         output << score;
+    else
+        output << bestScore;
     output.close();
 }
 bool isWinGame(int **board, int size)
@@ -190,7 +191,7 @@ void moveUp(int **board, int size, bool &canMove, int &score)
 }
 void printUI(int **board, int size, int score, int &bestScore)
 {
-    Sleep(150);
+    // Sleep(150);
     if (board == NULL)
         return;
     if (bestScore < score)

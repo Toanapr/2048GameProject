@@ -6,6 +6,7 @@
     "cstdlib": "cpp",
     "ctime": "cpp",
     "cstdio": "cpp",
-    "iosfwd": "cpp"
+    "iosfwd": "cpp",
+    "xiosbase": "cpp"
   }
 }

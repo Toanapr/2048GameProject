@@ -5,28 +5,26 @@ int main()
     int **board;
     int size;
     char choice;
-    int score = 20;
+    int score;
     int bestScore;
     fstream input, output;
     srand(time(0));
     List undo;
     system("cls");
     bestScore = getBestScore(input);
-    cout << bestScore;
-    saveBestScore(output, score, bestScore);
 
-    // startMenu(choice, size);
-    // while (choice != '2')
-    // {
-    //     initializeGame(undo, board, size, score, bestScore);
-    //     playGame(undo, board, size, score, bestScore, choice);
-    //     saveBestScore(output, score, bestScore);
-    //     if (choice == '2')
-    //     {
-    //         deleteMatrix(board, size);
-    //         deleteList(undo, size);
-    //         startMenu(choice, size);
-    //     }
-    // }
+    startMenu(choice, size);
+    while (choice != '2')
+    {
+        initializeGame(undo, board, size, score, bestScore);
+        playGame(undo, board, size, score, bestScore, choice);
+        saveBestScore(output, score, bestScore);
+        if (choice == '2')
+        {
+            deleteMatrix(board, size);
+            deleteList(undo, size);
+            startMenu(choice, size);
+        }
+    }
     return 0;
 }

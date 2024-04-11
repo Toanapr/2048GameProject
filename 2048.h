@@ -11,8 +11,7 @@
 #include "undoButton.h"
 #include <fstream>
 
-#define fileBestScore_fi "best_score_in.txt"
-#define fileBestScore_fo "best_score_out.txt"
+#define fileBestScore "best_score.txt"
 using namespace std;
 
 int **allocateMatrix(int size);
