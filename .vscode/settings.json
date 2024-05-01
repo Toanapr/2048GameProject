@@ -7,6 +7,8 @@
     "ctime": "cpp",
     "cstdio": "cpp",
     "iosfwd": "cpp",
-    "xiosbase": "cpp"
+    "xiosbase": "cpp",
+    "stack": "cpp",
+    "xutility": "cpp"
   }
 }

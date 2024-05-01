@@ -3,11 +3,15 @@
 
 #include "2048.h"
 
-struct Node
+struct dataOfNode
 {
     int **matrix;
     int score;
-    // int n;
+    int size;
+};
+struct Node
+{
+    dataOfNode data;
     Node *pNext;
 };
 struct List
@@ -15,11 +19,12 @@ struct List
     Node *pHead;
 };
 void createList(List &l);
+Node *createNode(dataOfNode data);
 Node *createNode(int **a, int n, int score);
 void addHead(List &l, Node *nodeAdd);
 void deleteHead(List &l);
 void deleteList(List &l, int n);
 void deleteMatrix(int **&a, int n);
-void copyMatrix(int **a, int **&b, int n);
+void copyValueMatrix(int **a, int **&b, int n);
 
 #endif

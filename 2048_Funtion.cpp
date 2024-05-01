@@ -256,8 +256,8 @@ void undoProcess(List &undo, int **&board, int size, int &score)
     if (undo.pHead->pNext == NULL)
         return;
     deleteHead(undo);
-    copyMatrix(undo.pHead->matrix, board, size);
-    score = undo.pHead->score;
+    copyValueMatrix(undo.pHead->data.matrix, board, size);
+    score = undo.pHead->data.score;
 }
 void playGame(List &undo, int **board, int size, int &score, int &bestScore, char &choice)
 {

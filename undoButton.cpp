@@ -5,18 +5,27 @@ void createList(List &l)
     l.pHead = new Node;
     l.pHead = NULL;
 }
-void copyMatrix(int **a, int **&b, int n)
+void copyValueMatrix(int **a, int **&b, int size)
 {
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n; j++)
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
             b[i][j] = a[i][j];
+}
+Node *createNode(dataOfNode _data)
+{
+    Node *temp = new Node;
+    temp->data.score = _data.score;
+    temp->data.matrix = allocateMatrix(_data.size);
+    copyValueMatrix(_data.matrix, temp->data.matrix, _data.size);
+    temp->pNext = NULL;
+    return temp;
 }
 Node *createNode(int **a, int n, int score)
 {
     Node *temp = new Node;
-    temp->matrix = allocateMatrix(n);
-    temp->score = score;
-    copyMatrix(a, temp->matrix, n);
+    temp->data.matrix = allocateMatrix(n);
+    temp->data.score = score;
+    copyValueMatrix(a, temp->data.matrix, n);
     temp->pNext = NULL;
     return temp;
 }
@@ -41,14 +50,14 @@ void deleteHead(List &l)
     l.pHead = l.pHead->pNext;
     delete temp;
 }
-void deleteMatrix(int **&a, int n)
+void deleteMatrix(int **&a, int size)
 {
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < size; i++)
         delete[] a[i];
     delete a;
     a = NULL;
 }
-void deleteList(List &l, int n)
+void deleteList(List &l, int size)
 {
     if (l.pHead == NULL)
         return;
@@ -57,7 +66,7 @@ void deleteList(List &l, int n)
         while (l.pHead != NULL)
         {
             Node *de = l.pHead;
-            deleteMatrix(de->matrix, n);
+            deleteMatrix(de->data.matrix, size);
             l.pHead = l.pHead->pNext;
             delete de;
         }
