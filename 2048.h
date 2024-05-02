@@ -11,9 +11,12 @@
 #include "LinkedList.h"
 #include "stack.h"
 #include <fstream>
+#include <string>
 
 #define fileBestScore "best_score.txt"
+
 using namespace std;
+
 
 int **allocateMatrix(int size);
 void swap(int *a, int *b);
@@ -26,7 +29,7 @@ int countEmptyPosition(int **board, int size);
 bool isGameEnded(int **board, int size);
 void placeRandomValueOnEmptyCell(int **board, int size);
 void initializeGame(Stack& undo, int**& board, int& size, int& score, int bestScore);
-void playGame(Stack& undo, int** board, int size, int& score, int& bestScore, char& choice);
+void playGame(Stack& undo, Stack &redo, int** board, int size, int& score, int& bestScore, char& choice);
 void startMenu(char &choice, int &size);
 void saveBestScore(fstream &output, int score, int bestScore);
 int getBestScore(fstream &input);

@@ -249,16 +249,25 @@ void initializeGame(Stack &undo, int **&board, int &size, int &score, int bestSc
     dataOfNode data = {board, score, size};
     undo.push(data);
 }
-void undoProcess(Stack &undo, int **&board, int size, int &score)
+void undoProcess(Stack &undo, Stack &redo, int **&board, int size, int &score)
 {
     if (undo.top()->pNext == NULL)
         return;
+    redo.push(undo.top()->data);
     undo.pop();
     Node *temp = undo.top();
     copyValueMatrix(temp->data.matrix, board, size);
     score = temp->data.score;
 }
-void playGame(Stack &undo, int **board, int size, int &score, int &bestScore, char &choice)
+void redoProcess(Stack &undo, Stack &redo, int **&board, int size, int &score)
+{
+    Node *temp = redo.top();
+    undo.push(temp->data);
+    copyValueMatrix(temp->data.matrix, board, size);
+    score = temp->data.score;
+    redo.pop();
+}
+void playGame(Stack &undo, Stack &redo, int **board, int size, int &score, int &bestScore, char &choice)
 {
     char x;
     bool canMove = false;
@@ -282,18 +291,24 @@ void playGame(Stack &undo, int **board, int size, int &score, int &bestScore, ch
             moveRight(board, size, canMove, score);
         if (x == 'z')
         {
-            undoProcess(undo, board, size, score);
+            undoProcess(undo, redo, board, size, score);
             system("cls");
             printUI(board, size, score, bestScore);
             continue;
+        }
+        if (x == 'y')
+        {
+            if (redo.empty())
+                continue;
+            else
+                redoProcess(undo, redo, board, size, score);
         }
         if (canMove == true)
         {
             placeRandomValueOnEmptyCell(board, size);
             dataOfNode data = {board, score, size};
-            // Node *temp = createNode(data);
-            // addHead(undo, temp);
             undo.push(data);
+            redo.clear();
         }
         system("cls");
         printUI(board, size, score, bestScore);
@@ -325,6 +340,7 @@ void playGame(Stack &undo, int **board, int size, int &score, int &bestScore, ch
 void startMenu(char &choice, int &size)
 {
     system("cls");
+    cout << ""<< endl;
     cout << "WELCOME TO 2048!!!" << endl;
     cout << "   1. Play a New Game" << endl;
     cout << "   2. Exit" << endl;

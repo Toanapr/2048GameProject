@@ -9,7 +9,7 @@ int main()
     int bestScore;
     fstream input, output;
     srand(time(0));
-    Stack undo;
+    Stack undo, redo;
     system("cls");
     bestScore = getBestScore(input);
 
@@ -17,7 +17,7 @@ int main()
     while (choice != '2')
     {
         initializeGame(undo, board, size, score, bestScore);
-        playGame(undo, board, size, score, bestScore, choice);
+        playGame(undo, redo, board, size, score, bestScore, choice);
         saveBestScore(output, score, bestScore);
         if (choice == '2')
         {
