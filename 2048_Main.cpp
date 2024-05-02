@@ -9,7 +9,7 @@ int main()
     int bestScore;
     fstream input, output;
     srand(time(0));
-    List undo;
+    Stack undo;
     system("cls");
     bestScore = getBestScore(input);
 
@@ -22,7 +22,7 @@ int main()
         if (choice == '2')
         {
             deleteMatrix(board, size);
-            deleteList(undo, size);
+            undo.clear();
             startMenu(choice, size);
         }
     }

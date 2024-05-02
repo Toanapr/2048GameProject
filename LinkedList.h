@@ -1,5 +1,5 @@
-#ifndef _UNDOBUTTON_H_
-#define _UNDOBUTTON_H_
+#ifndef _LINKEDLIST_H_
+#define _LINKEDLIST_H_
 
 #include "2048.h"
 
@@ -17,12 +17,17 @@ struct Node
 struct List
 {
     Node *pHead;
+    List()
+    {
+        pHead = NULL;
+    }
 };
 void createList(List &l);
 Node *createNode(dataOfNode data);
-Node *createNode(int **a, int n, int score);
 void addHead(List &l, Node *nodeAdd);
+void addTail(List &l, Node *nodeAdd);
 void deleteHead(List &l);
+void deleteTail(List &l);
 void deleteList(List &l, int n);
 void deleteMatrix(int **&a, int n);
 void copyValueMatrix(int **a, int **&b, int n);

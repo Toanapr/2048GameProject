@@ -53,16 +53,6 @@ int **allocateMatrix(int size)
         board[i] = new int[size];
     return board;
 }
-void creatNewGame(int **&board, int &size, int &score)
-{
-    board = allocateMatrix(size);
-    score = 0;
-    for (int i = 0; i < size; i++)
-        for (int j = 0; j < size; j++)
-            board[i][j] = 0;
-    placeRandomValueOnEmptyCell(board, size);
-    placeRandomValueOnEmptyCell(board, size);
-}
 void swap(int *a, int *b)
 {
     int temp = *a;
@@ -242,30 +232,38 @@ bool isGameEnded(int **board, int size)
     }
     return true;
 }
+void initializeGame(Stack &undo, int **&board, int &size, int &score, int bestScore)
+{
+    board = allocateMatrix(size);
 
-void initializeGame(List &undo, int **&board, int &size, int &score, int bestScore)
-{
-    creatNewGame(board, size, score);
+    score = 0;
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            board[i][j] = 0;
+    
+    placeRandomValueOnEmptyCell(board, size);
+    placeRandomValueOnEmptyCell(board, size);
+
     printUI(board, size, score, bestScore);
-    createList(undo);
-    Node *temp = createNode(board, size, score);
-    addHead(undo, temp);
+    
+    dataOfNode data = {board, score, size};
+    undo.push(data);
 }
-void undoProcess(List &undo, int **&board, int size, int &score)
+void undoProcess(Stack &undo, int **&board, int size, int &score)
 {
-    if (undo.pHead->pNext == NULL)
+    if (undo.top()->pNext == NULL)
         return;
-    deleteHead(undo);
-    copyValueMatrix(undo.pHead->data.matrix, board, size);
-    score = undo.pHead->data.score;
+    undo.pop();
+    Node *temp = undo.top();
+    copyValueMatrix(temp->data.matrix, board, size);
+    score = temp->data.score;
 }
-void playGame(List &undo, int **board, int size, int &score, int &bestScore, char &choice)
+void playGame(Stack &undo, int **board, int size, int &score, int &bestScore, char &choice)
 {
     char x;
     bool canMove = false;
     while (true)
     {
-        // cin >> x;
         x = getch();
         canMove = false;
         if (x == 'q')
@@ -292,8 +290,10 @@ void playGame(List &undo, int **board, int size, int &score, int &bestScore, cha
         if (canMove == true)
         {
             placeRandomValueOnEmptyCell(board, size);
-            Node *temp = createNode(board, size, score);
-            addHead(undo, temp);
+            dataOfNode data = {board, score, size};
+            // Node *temp = createNode(data);
+            // addHead(undo, temp);
+            undo.push(data);
         }
         system("cls");
         printUI(board, size, score, bestScore);

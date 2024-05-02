@@ -1,26 +1,26 @@
-#ifndef _STACK_H_
-#define _STACK_H_
+#ifndef _QUEUE_H_
+#define _QUEUE_H_
 
 #include "LinkedList.h"
 
-struct Stack
+struct Queue
 {
     List l;
     // void pop();
     // void push(dataOfNode _data);
-    // Node *top();
+    // Node *front();
     // bool empty();
     void pop()
     {
-        deleteHead(l);
+        deleteTail(l);
     }
     void push(dataOfNode _data)
     {
         Node *nodeToPush = new Node;
         nodeToPush = createNode(_data);
-        addHead(l, nodeToPush);
+        addTail(l, nodeToPush);
     }
-    Node *top()
+    Node *front()
     {
         if (l.pHead == NULL)
             return NULL;

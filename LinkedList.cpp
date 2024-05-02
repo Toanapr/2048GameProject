@@ -15,17 +15,9 @@ Node *createNode(dataOfNode _data)
 {
     Node *temp = new Node;
     temp->data.score = _data.score;
+    temp->data.size = _data.size;
     temp->data.matrix = allocateMatrix(_data.size);
     copyValueMatrix(_data.matrix, temp->data.matrix, _data.size);
-    temp->pNext = NULL;
-    return temp;
-}
-Node *createNode(int **a, int n, int score)
-{
-    Node *temp = new Node;
-    temp->data.matrix = allocateMatrix(n);
-    temp->data.score = score;
-    copyValueMatrix(a, temp->data.matrix, n);
     temp->pNext = NULL;
     return temp;
 }
@@ -42,13 +34,41 @@ void addHead(List &l, Node *nodeAdd)
         l.pHead = nodeAdd;
     }
 }
+void addTail(List &l, Node *nodeAdd)
+{
+    if (l.pHead == NULL)
+    {
+        l.pHead = nodeAdd;
+        l.pHead->pNext = NULL;
+    }
+    else
+    {
+        Node *temp = l.pHead;
+        while (temp->pNext != NULL)
+            temp = temp->pNext;
+        temp->pNext = nodeAdd;
+        nodeAdd->pNext = NULL;
+    }
+}
 void deleteHead(List &l)
 {
     if (l.pHead == NULL)
         return;
     Node *temp = l.pHead;
     l.pHead = l.pHead->pNext;
+    deleteMatrix(temp->data.matrix, temp->data.size);
     delete temp;
+}
+void deleteTail(List &l)
+{
+    if (l.pHead == NULL)
+        return;
+    Node *temp = l.pHead;
+    while (temp->pNext->pNext != NULL)
+        temp = temp->pNext;
+    deleteMatrix(temp->pNext->data.matrix, temp->pNext->data.size);
+    delete temp->pNext;
+    temp->pNext = NULL;    
 }
 void deleteMatrix(int **&a, int size)
 {
