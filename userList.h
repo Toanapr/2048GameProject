@@ -3,22 +3,22 @@
 
 #include "2048.h"
 
-#define listUserFile "user_list.txt"
+#define LIST_USER_FILE "user_list.txt"
 
 struct user
 {
-    string userName;
+    std::string userName;
     int score;
-    user(string _userName, int _score)
-    {
-        userName = _userName;
-        score = _score;
-    }
     user()
     {
         userName = "";
         score = 0;
     }
 };
+void loadFileUserList(std::fstream &input, user *&listUser, int &numberOfUser);
+void addUserInFile(std::fstream &output, user User);
+std::string enterUserName(user *listUser, int numberOfUser);
+void printTop10Score(user *listUser, int numberOfUser);
+int countNumberOfUser(std::fstream &input);
 
 #endif

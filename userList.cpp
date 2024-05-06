@@ -1,5 +1,32 @@
 #include "userList.h"
 
+int countNumberOfUser(std::fstream &input)
+{
+    int numberOfUser = 0;
+    while (!input.eof())
+    {
+        numberOfUser++;
+    }
+    return numberOfUser / 2;
+}
+void loadFileUserList(std::fstream &input, user *&listUser, int &numberOfUser)
+{
+    numberOfUser = 0;
+    while (!input.eof())
+    {
+        input >> listUser[numberOfUser].userName;
+        input >> listUser[numberOfUser].score;
+        numberOfUser++;
+    }
+}
+void addUserInFile(std::fstream &output, user User)
+{
+    output.open(LIST_USER_FILE, ios::app);
+    output << User.userName << endl
+           << User.score << endl;
+    output.close();
+}
+
 void swap(user &a, user &b)
 {
     user temp = a;
@@ -13,16 +40,16 @@ void sortScore(user *&listUser, int numberOfUser)
             if (listUser[i].score < listUser[j].score)
                 swap(listUser[i], listUser[j]);
 }
-bool isExistUserName(user *listUser, int numberOfUser, string name)
+bool isExistUserName(user *listUser, int numberOfUser, std::string name)
 {
     for (int i = 0; i < numberOfUser; i++)
         if (name == listUser[i].userName)
             return true;
     return false;
 }
-string enterUserName(user *listUser, int numberOfUser)
+std::string enterUserName(user *listUser, int numberOfUser)
 {
-    string name;
+    std::string name;
     cout << "enter the name: ";
     getline(cin, name);
     while (isExistUserName(listUser, numberOfUser, name))
@@ -34,6 +61,7 @@ string enterUserName(user *listUser, int numberOfUser)
 }
 void printTop10Score(user *listUser, int numberOfUser)
 {
+    sortScore(listUser, numberOfUser);
     cout << "TOP 10 USER WITH THE HIGHEST SCORE" << endl;
     for (int i = 0; i < numberOfUser; i++)
         cout << i + 1 << ". " << listUser[i].userName << setw(5) << listUser[i].score << endl;

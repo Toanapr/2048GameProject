@@ -179,15 +179,16 @@ void moveUp(int **board, int size, bool &canMove, int &score)
         }
     }
 }
-void printUI(int **board, int size, int score, int &bestScore)
+void printUI(int **board, int size, user player, int &bestScore)
 {
     // Sleep(150);
     if (board == NULL)
         return;
-    if (bestScore < score)
-        bestScore = score;
-    cout << "Score: " << score;
+    if (bestScore < player.score)
+        bestScore = player.score;
+    cout << "Score: " << player.score;
     cout << "\t Best: " << bestScore << endl;
+    cout << "Name: " << player.userName << endl;
     for (int k = 0; k < size; k++)
         cout << "+-------";
     cout << "+" << endl;
@@ -232,21 +233,21 @@ bool isGameEnded(int **board, int size)
     }
     return true;
 }
-void initializeGame(Stack &undo, int **&board, int &size, int &score, int bestScore)
+void initializeGame(Stack &undo, int **&board, int &size, user &player, int bestScore)
 {
     board = allocateMatrix(size);
 
-    score = 0;
+    player.score = 0;
     for (int i = 0; i < size; i++)
         for (int j = 0; j < size; j++)
             board[i][j] = 0;
-    
+
     placeRandomValueOnEmptyCell(board, size);
     placeRandomValueOnEmptyCell(board, size);
 
-    printUI(board, size, score, bestScore);
-    
-    dataOfNode data = {board, score, size};
+    printUI(board, size, player, bestScore);
+
+    dataOfNode data = {board, player.score, size};
     undo.push(data);
 }
 void undoProcess(Stack &undo, Stack &redo, int **&board, int size, int &score)
@@ -267,7 +268,7 @@ void redoProcess(Stack &undo, Stack &redo, int **&board, int size, int &score)
     score = temp->data.score;
     redo.pop();
 }
-void playGame(Stack &undo, Stack &redo, int **board, int size, int &score, int &bestScore, char &choice)
+void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int &bestScore, char &choice)
 {
     char x;
     bool canMove = false;
@@ -282,18 +283,18 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, int &score, int &
             break;
         }
         if (x == 'w')
-            moveUp(board, size, canMove, score);
+            moveUp(board, size, canMove, player.score);
         if (x == 's')
-            moveDown(board, size, canMove, score);
+            moveDown(board, size, canMove, player.score);
         if (x == 'a')
-            moveLeft(board, size, canMove, score);
+            moveLeft(board, size, canMove, player.score);
         if (x == 'd')
-            moveRight(board, size, canMove, score);
+            moveRight(board, size, canMove, player.score);
         if (x == 'z')
         {
-            undoProcess(undo, redo, board, size, score);
+            undoProcess(undo, redo, board, size, player.score);
             system("cls");
-            printUI(board, size, score, bestScore);
+            printUI(board, size, player, bestScore);
             continue;
         }
         if (x == 'y')
@@ -301,17 +302,17 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, int &score, int &
             if (redo.empty())
                 continue;
             else
-                redoProcess(undo, redo, board, size, score);
+                redoProcess(undo, redo, board, size, player.score);
         }
         if (canMove == true)
         {
             placeRandomValueOnEmptyCell(board, size);
-            dataOfNode data = {board, score, size};
+            dataOfNode data = {board, player.score, size};
             undo.push(data);
             redo.clear();
         }
         system("cls");
-        printUI(board, size, score, bestScore);
+        printUI(board, size, player, bestScore);
         cout << endl;
         if (isWinGame(board, size) == true)
         {
@@ -340,7 +341,7 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, int &score, int &
 void startMenu(char &choice, int &size)
 {
     system("cls");
-    cout << ""<< endl;
+    cout << "" << endl;
     cout << "WELCOME TO 2048!!!" << endl;
     cout << "   1. Play a New Game" << endl;
     cout << "   2. Exit" << endl;

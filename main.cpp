@@ -2,27 +2,38 @@
 
 int main()
 {
+    system("cls");
+    srand(time(0));
+
     int **board;
     int size;
     char choice;
-    int score;
-    int bestScore;
-    fstream input, output;
-    srand(time(0));
+    user player;
     Stack undo, redo;
-    system("cls");
+
+    fstream loadUser;
+    loadUser.open(LIST_USER_FILE, ios::in);
+    int numberOfUser = countNumberOfUser(loadUser);
+    user *userList = new user[numberOfUser];
+    loadFileUserList(loadUser, userList, numberOfUser);
+    loadUser.close();
+
+    fstream input, output;
+    int bestScore;
     bestScore = getBestScore(input);
 
     startMenu(choice, size);
     while (choice != '2')
     {
-        initializeGame(undo, board, size, score, bestScore);
-        playGame(undo, redo, board, size, score, bestScore, choice);
-        saveBestScore(output, score, bestScore);
+        player.userName = enterUserName(userList, numberOfUser);
+        initializeGame(undo, board, size, player, bestScore);
+        playGame(undo, redo, board, size, player, bestScore, choice);
+        saveBestScore(output, player.score, bestScore);
         if (choice == '2')
         {
             deleteMatrix(board, size);
             undo.clear();
+            redo.clear();
             startMenu(choice, size);
         }
     }
