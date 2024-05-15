@@ -1,10 +1,14 @@
-#include "userList.h"
+#include "2048.h"
 
 int countNumberOfUser(std::fstream &input)
 {
     int numberOfUser = 0;
+    std::string name = "";
+    int score = 0;
     while (!input.eof())
     {
+        input >> name;
+        input >> score;
         numberOfUser++;
     }
     return numberOfUser / 2;
@@ -21,9 +25,9 @@ void loadFileUserList(std::fstream &input, user *&listUser, int &numberOfUser)
 }
 void addUserInFile(std::fstream &output, user User)
 {
-    output.open(LIST_USER_FILE, ios::app);
-    output << User.userName << endl
-           << User.score << endl;
+    output.open(LIST_USER_FILE, std::ios::app);
+    output << User.userName << std::endl
+           << User.score << std::endl;
     output.close();
 }
 
@@ -50,19 +54,19 @@ bool isExistUserName(user *listUser, int numberOfUser, std::string name)
 std::string enterUserName(user *listUser, int numberOfUser)
 {
     std::string name;
-    cout << "enter the name: ";
-    getline(cin, name);
+    std::cout << "enter the name: ";
+    getline(std::cin, name);
     while (isExistUserName(listUser, numberOfUser, name))
     {
-        cout << "User name exists, please enter another user name!" << endl;
-        getline(cin, name);
+        std::cout << "User name exists, please enter another user name!" << std::endl;
+        getline(std::cin, name);
     }
     return name;
 }
 void printTop10Score(user *listUser, int numberOfUser)
 {
     sortScore(listUser, numberOfUser);
-    cout << "TOP 10 USER WITH THE HIGHEST SCORE" << endl;
+    std::cout << "TOP 10 USER WITH THE HIGHEST SCORE" << std::endl;
     for (int i = 0; i < numberOfUser; i++)
-        cout << i + 1 << ". " << listUser[i].userName << setw(5) << listUser[i].score << endl;
+        std::cout << i + 1 << ". " << listUser[i].userName << std::setw(5) << listUser[i].score << std::endl;
 }

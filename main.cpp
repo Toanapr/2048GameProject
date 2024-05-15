@@ -22,10 +22,10 @@ int main()
     int bestScore;
     bestScore = getBestScore(input);
 
+    player.userName = enterUserName(userList, numberOfUser);
     startMenu(choice, size);
     while (choice != '2')
     {
-        player.userName = enterUserName(userList, numberOfUser);
         initializeGame(undo, board, size, player, bestScore);
         playGame(undo, redo, board, size, player, bestScore, choice);
         saveBestScore(output, player.score, bestScore);
