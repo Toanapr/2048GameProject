@@ -6,7 +6,7 @@ int main()
     srand(time(0));
 
     int **board;
-    int size;
+    int size = 0;
     char choice;
     user player;
     Stack undo, redo;
@@ -21,20 +21,31 @@ int main()
     bestScore = getBestScore(input);
 
     startMenu(choice, size, player, userList, numberOfUser);
-    while (choice != '2')
+
+    while (choice != '4')
     {
-        initializeGame(undo, board, size, player, bestScore);
-        playGame(undo, redo, board, size, player, bestScore, choice);
-        saveBestScore(output, player.score, bestScore);
-        addUserInFile(loadUser, player);
-
-        numberOfUser++;
-        delete[] userList;
-        userList = new user[numberOfUser];
-        loadFileUserList(loadUser, userList, numberOfUser);
-
         if (choice == '2')
+
         {
+            initializeGame(undo, board, size, player, bestScore);
+            playGame(undo, redo, board, size, player, bestScore, choice);
+            saveBestScore(output, player.score, bestScore);
+            addUserInFile(loadUser, player);
+
+            numberOfUser++;
+            delete[] userList;
+            userList = new user[numberOfUser];
+            loadFileUserList(loadUser, userList, numberOfUser);
+        }
+
+        if (choice == '3')
+        {
+            startMenu(choice, size, player, userList, numberOfUser);
+        }
+
+        if (choice == '4' && size != 0)
+        {
+
             deleteMatrix(board, size);
             undo.clear();
             redo.clear();

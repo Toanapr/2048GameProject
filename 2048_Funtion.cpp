@@ -278,7 +278,7 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
         canMove = false;
         if (x == 'q')
         {
-            choice = '2';
+            choice = '4';
             system("cls");
             break;
         }
@@ -325,7 +325,7 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
             // if (m == 'y')
             // continue;
             // else
-            choice = '2';
+            choice = '4';
             break;
         }
         if (isGameEnded(board, size) == true)
@@ -333,7 +333,7 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
             system("cls");
             cout << "GameOver" << endl;
             system("pause");
-            choice = '2';
+            choice = '4';
             break;
         }
     }
@@ -343,32 +343,36 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
     system("cls");
     cout << "" << endl;
     cout << "WELCOME TO 2048!!!" << endl;
-    cout << "   1. Play a New Game" << endl;
-    cout << "   2. Exit" << endl;
+    cout << "   1. Resume" << endl;
+    cout << "   2. Play a New Game" << endl;
+    cout << "   3. Top 10" << endl;
+    cout << "   4. Exit" << endl;
     cout << "Enter Choice (press number and enter): ";
 
-    // bat nhap lai khi chon nhung phim khac menu
+    // enter again when press another
     cin >> choice;
-    while (choice != '1' && choice != '2')
+    while (choice != '1' && choice != '2' && choice != '3' && choice != '4' )
     {
         system("cls");
         cout << "WELCOME TO 2048!!!" << endl;
-        cout << "   1. Play a New Game" << endl;
-        cout << "   2. Exit" << endl;
+        cout << "   1. Resume" << endl;
+        cout << "   2. Play a New Game" << endl;
+        cout << "   3. Top 10" << endl;
+        cout << "   4. Exit" << endl;
         cout << "Invalid, please enter choice again: ";
         cin >> choice;
     }
 
     // exit game
-    if (choice == '2')
+    if (choice == '4')
     {
         system("cls");
         cout << "Thank you and have a good day!!!\n";
-        system("pause");
         return;
     }
 
-    if (choice == '1')
+    // new game
+    if (choice == '2')
     {
         system("cls");
         player.userName = enterUserName(userList, numberOfUser);
@@ -380,6 +384,13 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
             cout << "Invalid, please enter gameboard size again: ";
             cin >> size;
         }
+    }
+
+    // top 10
+    if (choice == '3')
+    {
+        printTop10Score(userList, numberOfUser);
+        system("pause");
     }
     system("cls");
 }

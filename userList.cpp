@@ -2,7 +2,7 @@
 
 int countNumberOfUser(std::fstream &input)
 {
-    input.open(LIST_USER_FILE, ios::in);
+    input.open(LIST_USER_FILE, std::ios::in);
     int numberOfUser = 0;
     std::string name = "";
     int score = 0;
@@ -17,7 +17,7 @@ int countNumberOfUser(std::fstream &input)
 }
 void loadFileUserList(std::fstream &input, user *&listUser, int numberOfUser)
 {
-    input.open(LIST_USER_FILE, ios::in);
+    input.open(LIST_USER_FILE, std::ios::in);
     numberOfUser = 0;
     while (!input.eof())
     {
