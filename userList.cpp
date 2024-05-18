@@ -2,6 +2,7 @@
 
 int countNumberOfUser(std::fstream &input)
 {
+    input.open(LIST_USER_FILE, ios::in);
     int numberOfUser = 0;
     std::string name = "";
     int score = 0;
@@ -11,10 +12,12 @@ int countNumberOfUser(std::fstream &input)
         input >> score;
         numberOfUser++;
     }
-    return numberOfUser / 2;
+    input.close();
+    return numberOfUser;
 }
-void loadFileUserList(std::fstream &input, user *&listUser, int &numberOfUser)
+void loadFileUserList(std::fstream &input, user *&listUser, int numberOfUser)
 {
+    input.open(LIST_USER_FILE, ios::in);
     numberOfUser = 0;
     while (!input.eof())
     {
@@ -22,6 +25,7 @@ void loadFileUserList(std::fstream &input, user *&listUser, int &numberOfUser)
         input >> listUser[numberOfUser].score;
         numberOfUser++;
     }
+    input.close();
 }
 void addUserInFile(std::fstream &output, user User)
 {
@@ -55,6 +59,7 @@ std::string enterUserName(user *listUser, int numberOfUser)
 {
     std::string name;
     std::cout << "enter the name: ";
+    cin.ignore();
     getline(std::cin, name);
     while (isExistUserName(listUser, numberOfUser, name))
     {

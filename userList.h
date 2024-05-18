@@ -15,7 +15,7 @@ struct user
         score = 0;
     }
 };
-void loadFileUserList(std::fstream &input, user *&listUser, int &numberOfUser);
+void loadFileUserList(std::fstream &input, user *&listUser, int numberOfUser);
 void addUserInFile(std::fstream &output, user User);
 std::string enterUserName(user *listUser, int numberOfUser);
 void printTop10Score(user *listUser, int numberOfUser);

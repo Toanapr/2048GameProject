@@ -338,7 +338,7 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
         }
     }
 }
-void startMenu(char &choice, int &size)
+void startMenu(char &choice, int &size, user &player, user *userList, int numberOfUser)
 {
     system("cls");
     cout << "" << endl;
@@ -346,6 +346,8 @@ void startMenu(char &choice, int &size)
     cout << "   1. Play a New Game" << endl;
     cout << "   2. Exit" << endl;
     cout << "Enter Choice (press number and enter): ";
+
+    // bat nhap lai khi chon nhung phim khac menu
     cin >> choice;
     while (choice != '1' && choice != '2')
     {
@@ -356,21 +358,28 @@ void startMenu(char &choice, int &size)
         cout << "Invalid, please enter choice again: ";
         cin >> choice;
     }
+
+    // exit game
     if (choice == '2')
     {
         system("cls");
         cout << "Thank you and have a good day!!!\n";
-        // system("pause");
+        system("pause");
         return;
     }
-    system("cls");
-    cout << "Enter gameboard size (press number and enter): ";
-    cin >> size;
-    while (size <= 0)
+
+    if (choice == '1')
     {
         system("cls");
-        cout << "Invalid, please enter gameboard size again: ";
+        player.userName = enterUserName(userList, numberOfUser);
+        cout << "Enter gameboard size (press number and enter): ";
         cin >> size;
+        while (size <= 0)
+        {
+            system("cls");
+            cout << "Invalid, please enter gameboard size again: ";
+            cin >> size;
+        }
     }
     system("cls");
 }

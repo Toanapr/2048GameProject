@@ -30,7 +30,7 @@ bool isGameEnded(int **board, int size);
 void placeRandomValueOnEmptyCell(int **board, int size);
 void initializeGame(Stack &undo, int **&board, int &size, user &player, int bestScore);
 void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int &bestScore, char &choice);
-void startMenu(char &choice, int &size);
+void startMenu(char &choice, int &size, user &player, user *userList, int numberOfUser);
 void saveBestScore(fstream &output, int score, int bestScore);
 int getBestScore(fstream &input);
 
