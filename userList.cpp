@@ -58,12 +58,14 @@ bool isExistUserName(user *listUser, int numberOfUser, std::string name)
 std::string enterUserName(user *listUser, int numberOfUser)
 {
     std::string name;
-    std::cout << "enter the name: ";
+    std::cout << "Enter the name: ";
     cin.ignore();
     getline(std::cin, name);
     while (isExistUserName(listUser, numberOfUser, name))
     {
+        system("cls");
         std::cout << "User name exists, please enter another user name!" << std::endl;
+        std::cout << "Enter the name: ";
         getline(std::cin, name);
     }
     return name;
@@ -72,6 +74,6 @@ void printTop10Score(user *listUser, int numberOfUser)
 {
     sortScore(listUser, numberOfUser);
     std::cout << "TOP 10 USER WITH THE HIGHEST SCORE" << std::endl;
-    for (int i = 0; i < numberOfUser; i++)
+    for (int i = 0; i < numberOfUser - 1; i++)
         std::cout << i + 1 << ". " << listUser[i].userName << std::setw(5) << listUser[i].score << std::endl;
 }

@@ -11,18 +11,20 @@ int randomTwoFour()
 int getBestScore(fstream &input)
 {
     int hi;
-    input.open(fileBestScore, ios::in);
-    input >> hi;
+    input.open(fileBestScore, ios::in | ios::binary);
+    input.read((char *)&hi, sizeof(hi));
     input.close();
     return hi;
 }
 void saveBestScore(fstream &output, int score, int bestScore)
 {
-    output.open(fileBestScore, ios::out);
+    output.open(fileBestScore, ios::out | ios::binary);
     if (score >= bestScore)
-        output << score;
+        // output << score;
+        output.write((char *)&score, sizeof(int));
     else
-        output << bestScore;
+        // output << bestScore;
+        output.write((char *)&bestScore, sizeof(int));
     output.close();
 }
 bool isWinGame(int **board, int size)
@@ -179,9 +181,8 @@ void moveUp(int **board, int size, bool &canMove, int &score)
         }
     }
 }
-void printUI(int **board, int size, user player, int &bestScore)
+void printUI(int **board, int size, user player, int &bestScore, bool isOpenUndo)
 {
-    // Sleep(150);
     if (board == NULL)
         return;
     if (bestScore < player.score)
@@ -208,8 +209,16 @@ void printUI(int **board, int size, user player, int &bestScore)
         }
         cout << "+" << endl;
     }
-    cout << " w : Up    a : Left \n s : Down  d : Right \n q : exit  z : undo\n ";
-    cout << "\nPress the key to play and continue.";
+    if (isOpenUndo == true)
+    {
+        cout << " w : Up    a : Left \n s : Down  d : Right \n q : exit  z : undo  y : redo\n";
+        cout << "\nPress the key to play and continue.";
+    }
+    else
+    {
+        cout << " w : Up    a : Left \n s : Down  d : Right \n q : exit";
+        cout << "\nPress the key to play and continue.";
+    }
 }
 int countEmptyPosition(int **board, int size)
 {
@@ -233,7 +242,7 @@ bool isGameEnded(int **board, int size)
     }
     return true;
 }
-void initializeGame(Stack &undo, int **&board, int &size, user &player, int bestScore)
+void initializeGame(Stack &undo, int **&board, int &size, user &player, int bestScore, bool isOpenUndo)
 {
     board = allocateMatrix(size);
 
@@ -245,7 +254,7 @@ void initializeGame(Stack &undo, int **&board, int &size, user &player, int best
     placeRandomValueOnEmptyCell(board, size);
     placeRandomValueOnEmptyCell(board, size);
 
-    printUI(board, size, player, bestScore);
+    printUI(board, size, player, bestScore, isOpenUndo);
 
     dataOfNode data = {board, player.score, size};
     undo.push(data);
@@ -268,7 +277,7 @@ void redoProcess(Stack &undo, Stack &redo, int **&board, int size, int &score)
     score = temp->data.score;
     redo.pop();
 }
-void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int &bestScore, char &choice)
+void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int &bestScore, char &choice, bool isOpenUndo)
 {
     char x;
     bool canMove = false;
@@ -290,14 +299,14 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
             moveLeft(board, size, canMove, player.score);
         if (x == 'd')
             moveRight(board, size, canMove, player.score);
-        if (x == 'z')
+        if (x == 'z' && isOpenUndo == true)
         {
             undoProcess(undo, redo, board, size, player.score);
             system("cls");
-            printUI(board, size, player, bestScore);
+            printUI(board, size, player, bestScore, isOpenUndo);
             continue;
         }
-        if (x == 'y')
+        if (x == 'y' && isOpenUndo == true)
         {
             if (redo.empty())
                 continue;
@@ -312,7 +321,7 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
             redo.clear();
         }
         system("cls");
-        printUI(board, size, player, bestScore);
+        printUI(board, size, player, bestScore, isOpenUndo);
         cout << endl;
         if (isWinGame(board, size) == true)
         {
@@ -325,7 +334,7 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
             // if (m == 'y')
             // continue;
             // else
-            choice = '4';
+            choice = '5';
             break;
         }
         if (isGameEnded(board, size) == true)
@@ -333,38 +342,40 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
             system("cls");
             cout << "GameOver" << endl;
             system("pause");
-            choice = '4';
+            choice = '5';
             break;
         }
     }
 }
-void startMenu(char &choice, int &size, user &player, user *userList, int numberOfUser)
+void startMenu(char &choice, int &size, user &player, user *userList, int numberOfUser, bool &isOpenUndo)
 {
     system("cls");
     cout << "" << endl;
     cout << "WELCOME TO 2048!!!" << endl;
     cout << "   1. Resume" << endl;
     cout << "   2. Play a New Game" << endl;
-    cout << "   3. Top 10" << endl;
-    cout << "   4. Exit" << endl;
+    cout << "   3. Top 20" << endl;
+    cout << "   4. Setting" << endl;
+    cout << "   5. Exit" << endl;
     cout << "Enter Choice (press number and enter): ";
 
     // enter again when press another
     cin >> choice;
-    while (choice != '1' && choice != '2' && choice != '3' && choice != '4' )
+    while (choice != '1' && choice != '2' && choice != '3' && choice != '4' && choice != '5')
     {
         system("cls");
         cout << "WELCOME TO 2048!!!" << endl;
         cout << "   1. Resume" << endl;
         cout << "   2. Play a New Game" << endl;
-        cout << "   3. Top 10" << endl;
-        cout << "   4. Exit" << endl;
+        cout << "   3. Top 20" << endl;
+        cout << "   4. Setting" << endl;
+        cout << "   5. Exit" << endl;
         cout << "Invalid, please enter choice again: ";
         cin >> choice;
     }
 
     // exit game
-    if (choice == '4')
+    if (choice == '5')
     {
         system("cls");
         cout << "Thank you and have a good day!!!\n";
@@ -376,21 +387,111 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
     {
         system("cls");
         player.userName = enterUserName(userList, numberOfUser);
-        cout << "Enter gameboard size (press number and enter): ";
-        cin >> size;
-        while (size <= 0)
-        {
-            system("cls");
-            cout << "Invalid, please enter gameboard size again: ";
-            cin >> size;
-        }
     }
 
-    // top 10
+    // top 20
     if (choice == '3')
     {
+        system("cls");
         printTop10Score(userList, numberOfUser);
         system("pause");
     }
+
+    if (choice == '4')
+    {
+        system("cls");
+        settingGame(size, isOpenUndo);
+    }
+
     system("cls");
+}
+
+bool isHaveAlpha(string s)
+{
+    bool check = true;
+    for (int i = 0; i < s.size(); i++)
+        if (isdigit(s[i]) == 0)
+            check = false;     
+    return check;
+}
+void settingGame(int &size, bool &isOpenUndo)
+{
+    cout << "Settings Game.\n";
+    cout << "1. Change the size game board.\n";
+    cout << "2. Open the undo and redo.\n";
+    cout << "3. Exit.\n";
+
+    char choice;
+    while (true)
+    {
+        cin >> choice;
+        while (choice != '1' && choice != '2' && choice != '3')
+        {
+            system("cls");
+            cout << "Invalid! Please choice again: ";
+            cin >> choice;
+        }
+
+        if (choice == '3')
+            break;
+
+        if (choice == '1')
+        {
+            system("cls");
+            cout << "Enter gameboard size (from 4x4 to 10x10): ";
+            string size_s;
+            cin >> size_s;
+
+            while (isHaveAlpha(size_s) == false || stoi(size_s) < 4 || stoi(size_s) > 10)
+            {
+                system("cls");
+                cout << "Invalid, please enter gameboard size again: ";
+                cin >> size_s;
+            }
+
+            size = stoi(size_s);
+            cout << "The gameboard size has been changed ";
+            Sleep(1200);
+
+            system("cls");
+            cout << "Settings Game.\n";
+            cout << "1. Change the size game board.\n";
+            cout << "2. Open the undo and redo.\n";
+            cout << "3. Exit.\n";
+        }
+
+        if (choice == '2')
+        {
+            system("cls");
+            cout << "Do you want to open undo and redo mode? (press y : yes or n : no)\n";
+            char tmp;
+            cin >> tmp;
+            while (tmp != 'y' && tmp != 'n')
+            {
+                system("cls");
+                cout << "Invalid, please enter again: ";
+                cin >> tmp;
+            }
+
+            if (tmp == 'y')
+            {
+                isOpenUndo = true;
+                system("cls");
+                cout << "Undo and Redo was opened ";
+                Sleep(1200);
+            }
+            else
+            {
+                isOpenUndo = false;
+                system("cls");
+                cout << "Undo and Redo was closed ";
+                Sleep(1200);
+            }
+            system("cls");
+            cout << "Settings Game.\n";
+            cout << "1. Change the size game board.\n";
+            cout << "2. Open the undo and redo.\n";
+            cout << "3. Exit.\n";
+        }
+    }
 }

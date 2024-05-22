@@ -6,10 +6,11 @@ int main()
     srand(time(0));
 
     int **board;
-    int size = 0;
+    int size = 4;
     char choice;
     user player;
     Stack undo, redo;
+    bool isOpenUndo = false;
 
     fstream loadUser;
     int numberOfUser = countNumberOfUser(loadUser);
@@ -20,15 +21,14 @@ int main()
     int bestScore;
     bestScore = getBestScore(input);
 
-    startMenu(choice, size, player, userList, numberOfUser);
+    startMenu(choice, size, player, userList, numberOfUser, isOpenUndo);
 
-    while (choice != '4')
+    while (choice != '5')
     {
         if (choice == '2')
-
         {
-            initializeGame(undo, board, size, player, bestScore);
-            playGame(undo, redo, board, size, player, bestScore, choice);
+            initializeGame(undo, board, size, player, bestScore, isOpenUndo);
+            playGame(undo, redo, board, size, player, bestScore, choice, isOpenUndo);
             saveBestScore(output, player.score, bestScore);
             addUserInFile(loadUser, player);
 
@@ -38,18 +38,18 @@ int main()
             loadFileUserList(loadUser, userList, numberOfUser);
         }
 
-        if (choice == '3')
+        if (choice == '3' || choice == '4')
         {
-            startMenu(choice, size, player, userList, numberOfUser);
+            startMenu(choice, size, player, userList, numberOfUser, isOpenUndo);
         }
 
-        if (choice == '4' && size != 0)
+        if (choice == '5' && size != 4)
         {
 
             deleteMatrix(board, size);
             undo.clear();
             redo.clear();
-            startMenu(choice, size, player, userList, numberOfUser);
+            startMenu(choice, size, player, userList, numberOfUser, isOpenUndo);
         }
     }
     return 0;
