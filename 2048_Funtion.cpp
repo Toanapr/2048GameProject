@@ -281,24 +281,37 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
 {
     char x;
     bool canMove = false;
+    chrono::high_resolution_clock::time_point start_time = std::chrono::high_resolution_clock::now();
+
     while (true)
     {
         x = getch();
         canMove = false;
+
         if (x == 'q')
         {
-            choice = '4';
+            choice = '5';
             system("cls");
+
+            chrono::high_resolution_clock::time_point end_time = std::chrono::high_resolution_clock::now();
+            chrono::seconds duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
+            player.playingTime = duration.count();
+
             break;
         }
+
         if (x == 'w')
             moveUp(board, size, canMove, player.score);
+
         if (x == 's')
             moveDown(board, size, canMove, player.score);
+
         if (x == 'a')
             moveLeft(board, size, canMove, player.score);
+
         if (x == 'd')
             moveRight(board, size, canMove, player.score);
+            
         if (x == 'z' && isOpenUndo == true)
         {
             undoProcess(undo, redo, board, size, player.score);
@@ -306,6 +319,7 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
             printUI(board, size, player, bestScore, isOpenUndo);
             continue;
         }
+
         if (x == 'y' && isOpenUndo == true)
         {
             if (redo.empty())
@@ -313,6 +327,7 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
             else
                 redoProcess(undo, redo, board, size, player.score);
         }
+
         if (canMove == true)
         {
             placeRandomValueOnEmptyCell(board, size);
@@ -320,9 +335,11 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
             undo.push(data);
             redo.clear();
         }
+
         system("cls");
         printUI(board, size, player, bestScore, isOpenUndo);
         cout << endl;
+
         if (isWinGame(board, size) == true)
         {
             system("cls");
@@ -337,12 +354,18 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
             choice = '5';
             break;
         }
+
         if (isGameEnded(board, size) == true)
         {
             system("cls");
             cout << "GameOver" << endl;
             system("pause");
             choice = '5';
+
+            chrono::high_resolution_clock::time_point end_time = std::chrono::high_resolution_clock::now();
+            chrono::seconds duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
+            player.playingTime = duration.count();
+            
             break;
         }
     }

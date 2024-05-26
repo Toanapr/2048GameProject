@@ -7,6 +7,7 @@
 #include <ctime>
 #include <cstdio>
 #include <conio.h>
+#include <chrono>
 #include <windows.h>
 #include "LinkedList.h"
 #include "stack.h"

@@ -45,7 +45,6 @@ int main()
 
         if (choice == '5' && size != 4)
         {
-
             deleteMatrix(board, size);
             undo.clear();
             redo.clear();
