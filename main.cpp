@@ -12,6 +12,8 @@ int main()
     Stack undo, redo;
     bool isOpenUndo = false;
 
+    
+
     fstream loadUser;
     int numberOfUser = countNumberOfUser(loadUser);
     user *userList = new user[numberOfUser];
@@ -21,6 +23,11 @@ int main()
     int bestScore;
     bestScore = getBestScore(input);
 
+    initializeGame(undo, board, size, player, bestScore, isOpenUndo);
+    playGame(undo, redo, board, size, player, bestScore, choice, isOpenUndo);
+    
+
+    #if(0)
     startMenu(choice, size, player, userList, numberOfUser, isOpenUndo);
 
     while (choice != '5')
@@ -51,5 +58,6 @@ int main()
             startMenu(choice, size, player, userList, numberOfUser, isOpenUndo);
         }
     }
+    #endif
     return 0;
 }

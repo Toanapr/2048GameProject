@@ -181,34 +181,138 @@ void moveUp(int **board, int size, bool &canMove, int &score)
         }
     }
 }
+// void printUI(int **board, int size, user player, int &bestScore, bool isOpenUndo)
+// {
+//     if (board == NULL)
+//         return;
+//     if (bestScore < player.score)
+//         bestScore = player.score;
+//     cout << "Score: " << player.score;
+//     cout << "\t Best: " << bestScore << endl;
+//     cout << "Name: " << player.userName << endl;
+//     for (int k = 0; k < size; k++)
+//         cout << "+-------";
+//     cout << "+" << endl;
+//     for (int i = 0; i < size; i++)
+//     {
+//         for (int j = 0; j < size; j++)
+//         {
+//             if (board[i][j] != 0)
+//                 cout << "|" << setw(4) << board[i][j] << setw(4);
+//             else
+//                 cout << "|" << setw(4) << ' ' << setw(4);
+//         }
+//         cout << "|" << endl;
+//         for (int k = 0; k < size; k++)
+//         {
+//             cout << "+-------";
+//         }
+//         cout << "+" << endl;
+//     }
+//     if (isOpenUndo == true)
+//     {
+//         cout << " w : Up    a : Left \n s : Down  d : Right \n q : exit  z : undo  y : redo\n";
+//         cout << "\nPress the key to play and continue.";
+//     }
+//     else
+//     {
+//         cout << " w : Up    a : Left \n s : Down  d : Right \n q : exit";
+//         cout << "\nPress the key to play and continue.";
+//     }
+// }
 void printUI(int **board, int size, user player, int &bestScore, bool isOpenUndo)
 {
     if (board == NULL)
         return;
     if (bestScore < player.score)
         bestScore = player.score;
+
+    // Define color codes
+    const string RESET = "\033[0m";
+    const string BORDER_COLOR = "\033[33m";
+    const string COLORS[] = {
+        "\033[30;47m", // Black on White for 2
+        "\033[30;43m", // Black on Yellow for 4
+        "\033[30;42m", // Black on Green for 8
+        "\033[30;46m", // Black on Cyan for 16
+        "\033[30;44m", // Black on Blue for 32
+        "\033[30;45m", // Black on Magenta for 64
+        "\033[37;41m", // White on Red for 128
+        "\033[37;43m", // White on Yellow for 256
+        "\033[37;42m", // White on Green for 512
+        "\033[37;44m", // White on Blue for 1024
+        "\033[37;45m", // White on Magenta for 2048
+        "\033[33;41m",
+    };
+
     cout << "Score: " << player.score;
     cout << "\t Best: " << bestScore << endl;
     cout << "Name: " << player.userName << endl;
+    cout << BORDER_COLOR;
     for (int k = 0; k < size; k++)
-        cout << "+-------";
-    cout << "+" << endl;
+        cout << "+------";
+    cout << "+" << RESET << endl;
+
     for (int i = 0; i < size; i++)
     {
         for (int j = 0; j < size; j++)
         {
-            if (board[i][j] != 0)
-                cout << "|" << setw(4) << board[i][j] << setw(4);
+            int value = board[i][j];
+            string color = RESET;
+            if (value > 2048)
+                color = COLORS[11];
             else
-                cout << "|" << setw(4) << ' ' << setw(4);
+            {
+                switch (value)
+                {
+                case 2:
+                    color = COLORS[0];
+                    break;
+                case 4:
+                    color = COLORS[1];
+                    break;
+                case 8:
+                    color = COLORS[2];
+                    break;
+                case 16:
+                    color = COLORS[3];
+                    break;
+                case 32:
+                    color = COLORS[4];
+                    break;
+                case 64:
+                    color = COLORS[5];
+                    break;
+                case 128:
+                    color = COLORS[6];
+                    break;
+                case 256:
+                    color = COLORS[7];
+                    break;
+                case 512:
+                    color = COLORS[8];
+                    break;
+                case 1024:
+                    color = COLORS[9];
+                    break;
+                case 2048:
+                    color = COLORS[10];
+                    break;
+                default:
+                    color = RESET;
+                    break;
+                }
+            }
+            cout << BORDER_COLOR << "|" << RESET << color << setw(5) << (value != 0 ? to_string(value) : " ") << setw(5) << RESET;
         }
-        cout << "|" << endl;
+        cout << BORDER_COLOR << "|" << endl;
         for (int k = 0; k < size; k++)
         {
-            cout << "+-------";
+            cout << "+------";
         }
         cout << "+" << endl;
     }
+    cout << RESET;
     if (isOpenUndo == true)
     {
         cout << " w : Up    a : Left \n s : Down  d : Right \n q : exit  z : undo  y : redo\n";
@@ -281,7 +385,11 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
 {
     char x;
     bool canMove = false;
+    bool continuePlayWin = false;
+    bool continuePlayLose = false;
     chrono::high_resolution_clock::time_point start_time = std::chrono::high_resolution_clock::now();
+    chrono::high_resolution_clock::time_point end_time;
+    chrono::seconds duration;
 
     while (true)
     {
@@ -293,9 +401,15 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
             choice = '5';
             system("cls");
 
-            chrono::high_resolution_clock::time_point end_time = std::chrono::high_resolution_clock::now();
-            chrono::seconds duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
-            player.playingTime = duration.count();
+            if (continuePlayWin == false) // khi da thang ma tiep tuc choi thi khong luu tru thong tin
+            {
+                end_time = std::chrono::high_resolution_clock::now();
+                duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
+                player.playingTime = duration.count();
+
+                //TODO: LUU TRU THONG TIN NGUOI CHOI NEU DAT TOP 20
+
+            }
 
             break;
         }
@@ -311,7 +425,7 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
 
         if (x == 'd')
             moveRight(board, size, canMove, player.score);
-            
+
         if (x == 'z' && isOpenUndo == true)
         {
             undoProcess(undo, redo, board, size, player.score);
@@ -340,33 +454,76 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
         printUI(board, size, player, bestScore, isOpenUndo);
         cout << endl;
 
-        if (isWinGame(board, size) == true)
+        if (isWinGame(board, size) == true && continuePlayWin == false)
         {
             system("cls");
-            cout << "You Win!!" << endl;
-            system("pause");
-            // cout << "Do you want to continue? (press y: yes or n: no)" << endl;
-            // char m;
-            // cin >> m;
-            // if (m == 'y')
-            // continue;
-            // else
-            choice = '5';
-            break;
+            cout << "Congratulation! You Win!!" << endl;
+
+            // TODO: THONG BAO THU HANG CUA NGUOI CHOI NEU DAT TOP 20
+
+            cout << "Do you want to continue? (press y: yes or n: no)" << endl;
+            char m;
+            cin >> m;
+            while (m != 'y' && m != 'n')
+            {
+                system("cls");
+                cout << "Invalid, please enter choice again (press y: yes or n: no):  ";
+                cin >> m;
+            }
+
+            if (m == 'y')
+            {
+                continuePlayWin = true;
+                system("cls");
+                printUI(board, size, player, bestScore, isOpenUndo);
+            }
+            else
+            {
+                end_time = std::chrono::high_resolution_clock::now();
+                duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
+                player.playingTime = duration.count();
+
+                // TODO: LUU TRU THONG TIN NGUOI CHOI NEU DAT TOP 20
+                
+                choice = '5';
+                break;
+            }
         }
 
         if (isGameEnded(board, size) == true)
         {
             system("cls");
             cout << "GameOver" << endl;
-            system("pause");
-            choice = '5';
 
-            chrono::high_resolution_clock::time_point end_time = std::chrono::high_resolution_clock::now();
-            chrono::seconds duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
-            player.playingTime = duration.count();
+            //TODO: THONG BAO THU HANG CUA NGUOI CHOI NEU DAT TOP 20
+
+            cout << "Do you want to continue (use Undo to continue play)? (press y: yes or n: no)" << endl;
+            char m;
+            cin >> m;
+            while (m != 'y' && m != 'n')
+            {
+                system("cls");
+                cout << "Invalid, please enter choice again (press y: yes or n: no):  ";
+                cin >> m;
+            }
             
-            break;
+            if (m == 'y')
+            {
+                system("cls");
+                isOpenUndo = true;
+                printUI(board, size, player, bestScore, isOpenUndo);
+            }
+            else
+            {
+                end_time = std::chrono::high_resolution_clock::now();
+                duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
+                player.playingTime = duration.count();
+
+                // TODO: LUU TRU THONG TIN NEU NGUOI CHOI DAT TOP 20
+
+                choice = '5';
+                break;
+            }
         }
     }
 }
@@ -416,7 +573,7 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
     if (choice == '3')
     {
         system("cls");
-        printTop10Score(userList, numberOfUser);
+        printTop20Score(userList, numberOfUser);
         system("pause");
     }
 
@@ -434,7 +591,7 @@ bool isHaveAlpha(string s)
     bool check = true;
     for (int i = 0; i < s.size(); i++)
         if (isdigit(s[i]) == 0)
-            check = false;     
+            check = false;
     return check;
 }
 void settingGame(int &size, bool &isOpenUndo)

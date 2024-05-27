@@ -23,6 +23,7 @@ void loadFileUserList(std::fstream &input, user *&listUser, int numberOfUser)
     {
         input >> listUser[numberOfUser].userName;
         input >> listUser[numberOfUser].score;
+        // input >> listUser[numberOfUser].playingTime;
         numberOfUser++;
     }
     input.close();
@@ -32,6 +33,7 @@ void addUserInFile(std::fstream &output, user User)
     output.open(LIST_USER_FILE, std::ios::app);
     output << User.userName << std::endl
            << User.score << std::endl;
+        //    << User.playingTime << std::endl;
     output.close();
 }
 
@@ -53,7 +55,7 @@ bool isExistUserName(user *listUser, int numberOfUser, std::string name)
     for (int i = 0; i < numberOfUser; i++)
         if (name == listUser[i].userName)
             return true;
-            
+
     return false;
 }
 
@@ -111,14 +113,14 @@ void printTop20Score(user *listUser, int numberOfUser)
 {
     sortScore(listUser, numberOfUser);
 
-    std::cout << "TOP 20 USER WITH THE HIGHEST SCORE" << std::endl;
+    std::cout << "       TOP 20 USER WITH THE HIGHEST SCORE" << std::endl;
     std::cout << setw(5) << left << "STT";
     std::cout << setw(30) << left << "Name";
-    std::cout << setw(10) << left << "Score" << endl;
+    std::cout << setw(10) << left << "Score";
     std::cout << setw(10) << left << "Time" << endl;
 
     std::cout << setfill('-');
-    std::cout << setw(55) << "-" << endl;
+    std::cout << setw(50) << "-" << endl;
     std::cout << setfill(' ');
 
     for (int i = 0; i < numberOfUser - 1; i++)
