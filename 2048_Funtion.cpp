@@ -16,6 +16,7 @@ int getBestScore(fstream &input)
     input.close();
     return hi;
 }
+
 void saveBestScore(fstream &output, int score, int bestScore)
 {
     output.open(fileBestScore, ios::out | ios::binary);
@@ -247,7 +248,7 @@ void printUI(int **board, int size, user player, int &bestScore, bool isOpenUndo
 
     cout << "Score: " << player.score;
     cout << "\t Best: " << bestScore << endl;
-    cout << "Name: " << player.userName << endl;
+    cout << "Name: " << formatName(player.userName) << endl;
     cout << BORDER_COLOR;
     for (int k = 0; k < size; k++)
         cout << "+------";

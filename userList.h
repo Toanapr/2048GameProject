@@ -3,7 +3,7 @@
 
 #include "2048.h"
 
-#define LIST_USER_FILE "user_list.txt"
+#define LIST_USER_FILE "user_list.bin"
 
 struct user
 {
@@ -20,10 +20,12 @@ struct user
 };
 
 void loadFileUserList(std::fstream &input, user *&listUser, int numberOfUser);
-void addUserInFile(std::fstream &output, user User);
+void addUserInFile(std::fstream &output, user *listUser, int numberOfUser);
 std::string enterUserName(user *listUser, int numberOfUser);
 void printTop20Score(user *listUser, int numberOfUser);
 int countNumberOfUser(std::fstream &input);
 std::string getPlayingTime(int time);
+void sortScore(user *&listUser, int numberOfUser);
+std::string formatName(std::string name);
 
 #endif

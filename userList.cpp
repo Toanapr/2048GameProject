@@ -2,38 +2,29 @@
 
 int countNumberOfUser(std::fstream &input)
 {
-    input.open(LIST_USER_FILE, std::ios::in);
-    int numberOfUser = 0;
-    std::string name = "";
-    int score = 0;
-    while (!input.eof())
-    {
-        input >> name;
-        input >> score;
-        numberOfUser++;
+    int count = 0;
+    user User;
+    input.open(LIST_USER_FILE, ios::in | ios::binary);
+
+    while (input.read(reinterpret_cast<char*>(&User), sizeof(user))) {
+        count++;
     }
+
     input.close();
-    return numberOfUser;
+    return count;
 }
+
 void loadFileUserList(std::fstream &input, user *&listUser, int numberOfUser)
 {
-    input.open(LIST_USER_FILE, std::ios::in);
-    numberOfUser = 0;
-    while (!input.eof())
-    {
-        input >> listUser[numberOfUser].userName;
-        input >> listUser[numberOfUser].score;
-        // input >> listUser[numberOfUser].playingTime;
-        numberOfUser++;
-    }
+    input.open(LIST_USER_FILE, ios::in | ios::binary);
+    input.read((char *)listUser, sizeof(user) * numberOfUser);
     input.close();
 }
-void addUserInFile(std::fstream &output, user User)
+
+void addUserInFile(std::fstream &output, user *listUser, int numberOfUser)
 {
-    output.open(LIST_USER_FILE, std::ios::app);
-    output << User.userName << std::endl
-           << User.score << std::endl;
-        //    << User.playingTime << std::endl;
+    output.open(LIST_USER_FILE, ios::out | ios::binary);
+    output.write((char *)listUser, sizeof(user) * numberOfUser);
     output.close();
 }
 
@@ -80,8 +71,16 @@ void normalize(std::string &name)
 
 bool isValidName(std::string name)
 {
+    int sizeName = name.size();
+
+    if (sizeName < 6)
+        return false;
+
+    if (sizeName > 30)
+        return false;
+
     for (int i = 0; i < name.size(); i++)
-        if (!(name[i] == '_' || isalpha(name[i]) != 0 || isdigit(name[i]) != 0))
+        if (!(name[i] == '_' || isalpha(name[i]) != 0 || isdigit(name[i]) != 0 || name[i] == ' '))
             return false;
 
     return true;
@@ -107,27 +106,38 @@ std::string enterUserName(user *listUser, int numberOfUser)
         normalize(name);
     }
 
+    while (name.size() < 30)
+        name = name + '*';
+
     return name;
 }
+
+string formatName(string name)
+{
+    int index = name.find('*');
+
+    return name.substr(0, index);
+}
+
 void printTop20Score(user *listUser, int numberOfUser)
 {
     sortScore(listUser, numberOfUser);
 
     std::cout << "       TOP 20 USER WITH THE HIGHEST SCORE" << std::endl;
-    std::cout << setw(5) << left << "STT";
-    std::cout << setw(30) << left << "Name";
-    std::cout << setw(10) << left << "Score";
-    std::cout << setw(10) << left << "Time" << endl;
+    std::cout << std::setw(5) << std::left << "STT";
+    std::cout << std::setw(30) << std::left << "Name";
+    std::cout << std::setw(10) << std::left << "Score";
+    std::cout << std::setw(10) << std::left << "Time" << std::endl;
 
-    std::cout << setfill('-');
-    std::cout << setw(50) << "-" << endl;
-    std::cout << setfill(' ');
+    std::cout << std::setfill('-');
+    std::cout << std::setw(50) << "-" << std::endl;
+    std::cout << std::setfill(' ');
 
-    for (int i = 0; i < numberOfUser - 1; i++)
+    for (int i = 0; i < 20; i++)
         std::cout << std::setw(5) << i + 1
-                  << std::setw(30) << left << listUser[i].userName
-                  << std::setw(10) << left << listUser[i].score
-                  << std::setw(10) << left << getPlayingTime(listUser[i].playingTime) << std::endl;
+                  << std::setw(30) << std::left << formatName(listUser[i].userName)
+                  << std::setw(10) << std::left << listUser[i].score
+                  << std::setw(10) << std::left << getPlayingTime(listUser[i].playingTime) << std::endl;
 }
 
 std::string getPlayingTime(int time)
