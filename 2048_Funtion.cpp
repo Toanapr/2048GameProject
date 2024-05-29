@@ -248,7 +248,8 @@ void printUI(int **board, int size, user player, int &bestScore, bool isOpenUndo
 
     cout << "Score: " << player.score;
     cout << "\t Best: " << bestScore << endl;
-    cout << "Name: " << formatName(player.userName) << endl;
+    formatName(player.userName);
+    cout << "Name: " << player.userName << endl;
     cout << BORDER_COLOR;
     for (int k = 0; k < size; k++)
         cout << "+------";
@@ -567,7 +568,7 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
     if (choice == '2')
     {
         system("cls");
-        player.userName = enterUserName(userList, numberOfUser);
+        enterUserName(userList, numberOfUser, player.userName);
     }
 
     // top 20

@@ -1,17 +1,18 @@
 #include "2048.h"
 
+
+
 int countNumberOfUser(std::fstream &input)
 {
-    int count = 0;
-    user User;
-    input.open(LIST_USER_FILE, ios::in | ios::binary);
+    input.open(LIST_USER_FILE, ios::in);
 
-    while (input.read(reinterpret_cast<char*>(&User), sizeof(user))) {
-        count++;
-    }
+    int begin = input.tellg();
+    input.seekg(0, ios::end);
+    int end = input.tellg();
 
     input.close();
-    return count;
+    // cout << end << " " << begin << " " << sizeof(user);
+    return (end - begin) / sizeof(user);
 }
 
 void loadFileUserList(std::fstream &input, user *&listUser, int numberOfUser)
@@ -34,6 +35,7 @@ void swap(user &a, user &b)
     a = b;
     b = temp;
 }
+
 void sortScore(user *&listUser, int numberOfUser)
 {
     for (int i = 0; i < numberOfUser; i++)
@@ -41,86 +43,95 @@ void sortScore(user *&listUser, int numberOfUser)
             if (listUser[i].score < listUser[j].score)
                 swap(listUser[i], listUser[j]);
 }
-bool isExistUserName(user *listUser, int numberOfUser, std::string name)
+
+void formatName(char* name)
+{
+    char* pos = strchr(name, '*');
+    if (pos)
+        *pos = '\0';
+}
+
+bool isExistUserName(user *listUser, int numberOfUser, const char* name)
 {
     for (int i = 0; i < numberOfUser; i++)
-        if (name == listUser[i].userName)
+    {
+        formatName(listUser[i].userName);
+        if (strcmp(name, listUser[i].userName) == 0)
             return true;
+    }
 
     return false;
 }
 
-void normalize(std::string &name)
+void normalize(char* name)
 {
-    while (name[0] == ' ')
-        name.erase(0, 1);
+    int len = strlen(name);
+    int start = 0, end = len - 1;
 
-    while (name[name.size() - 1] == ' ')
-        name.erase(name.size() - 1, 1);
+    while (start < len && name[start] == ' ')
+        start++;
+    while (end >= 0 && name[end] == ' ')
+        end--;
 
-    for (int i = 0; i < name.size(); i++)
-        if (name[i] == ' ')
-        {
-            while (name[i + 1] == ' ')
-            {
-                name.erase(i + 1, 1);
-                i--;
-            }
-        }
+    if (start > end)
+    {
+        name[0] = '\0';
+        return;
+    }
+
+    memmove(name, name + start, end - start + 1);
+    name[end - start + 1] = '\0';
+
+    char* dest = name;
+    for (char* src = name; *src; src++)
+    {
+        *dest = *src;
+        if (*src != ' ' || (dest > name && *(dest - 1) != ' '))
+            dest++;
+    }
+    *dest = '\0';
 }
 
-bool isValidName(std::string name)
+bool isValidName(const char* name)
 {
-    int sizeName = name.size();
+    int sizeName = strlen(name);
 
-    if (sizeName < 6)
+    if (sizeName < 6 || sizeName > 30)
         return false;
 
-    if (sizeName > 30)
-        return false;
-
-    for (int i = 0; i < name.size(); i++)
-        if (!(name[i] == '_' || isalpha(name[i]) != 0 || isdigit(name[i]) != 0 || name[i] == ' '))
+    for (int i = 0; i < sizeName; i++)
+        if (!(name[i] == '_' || isalpha(name[i]) || isdigit(name[i]) || name[i] == ' '))
             return false;
 
     return true;
 }
 
-std::string enterUserName(user *listUser, int numberOfUser)
+void enterUserName(user *listUser, int numberOfUser, char* name)
 {
-    std::string name;
-    std::cout << "Enter the name (Note: name from 6 to 30 characters including lowercase letters, uppercase letters, numbers, spaces and the character "
-                 "_"
-                 "): ";
+    std::cout << "Enter the name (Note: name from 6 to 30 characters including lowercase letters, uppercase letters, numbers, spaces and the character _): ";
     std::cin.ignore();
-
-    getline(std::cin, name);
+    std::cin.getline(name, MAX_NAME_LENGTH);
     normalize(name);
+    
 
     while (isExistUserName(listUser, numberOfUser, name) || !isValidName(name))
     {
         system("cls");
-        std::cout << "User name already exists or User name is not valid , please enter another user name!" << std::endl;
+        std::cout << "User name already exists or User name is not valid, please enter another user name!" << std::endl;
         std::cout << "Enter the name: ";
-        getline(std::cin, name);
+        std::cin.getline(name, MAX_NAME_LENGTH);
         normalize(name);
     }
 
-    while (name.size() < 30)
-        name = name + '*';
-
-    return name;
+    while (strlen(name) < 30)
+        strcat(name, "*");
 }
 
-string formatName(string name)
-{
-    int index = name.find('*');
 
-    return name.substr(0, index);
-}
 
 void printTop20Score(user *listUser, int numberOfUser)
 {
+    
     sortScore(listUser, numberOfUser);
 
     std::cout << "       TOP 20 USER WITH THE HIGHEST SCORE" << std::endl;
@@ -130,23 +141,31 @@ void printTop20Score(user *listUser, int numberOfUser)
     std::cout << std::setw(10) << std::left << "Time" << std::endl;
 
     std::cout << std::setfill('-');
-    std::cout << std::setw(50) << "-" << std::endl;
+    std::cout << std::setw(55) << "-" << std::endl;
     std::cout << std::setfill(' ');
 
-    for (int i = 0; i < 20; i++)
+    numberOfUser = (numberOfUser > 20) ? 20 : numberOfUser;
+    
+    for (int i = 0; i < numberOfUser; i++)
+    {
+        formatName(listUser[i].userName);
         std::cout << std::setw(5) << i + 1
-                  << std::setw(30) << std::left << formatName(listUser[i].userName)
+                  << std::setw(30) << std::left << listUser[i].userName
                   << std::setw(10) << std::left << listUser[i].score
                   << std::setw(10) << std::left << getPlayingTime(listUser[i].playingTime) << std::endl;
+    }
+
+    cout << std::right;
 }
 
-std::string getPlayingTime(int time)
+char* getPlayingTime(int time)
 {
-    std::string res = "";
-
+    char* res;
+    
     int hours = static_cast<int>(time / 3600);
     int minutes = static_cast<int>((time % 3600) / 60);
     int seconds = static_cast<int>(time % 60);
 
-    return std::to_string(hours) + ":" + std::to_string(minutes) + ":" + std::to_string(seconds);
+    sprintf(res, "%02d:%02d:%02d", hours, minutes, seconds);
+    return res;
 }

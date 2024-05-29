@@ -13,6 +13,7 @@
 #include "stack.h"
 #include <fstream>
 #include <string>
+#include <cstring>
 #include "userList.h"
 
 #define fileBestScore "best_score.bin"

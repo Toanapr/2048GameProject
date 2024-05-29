@@ -12,30 +12,35 @@ int main()
     Stack undo, redo;
     bool isOpenUndo = false;
 
-    player.userName = "thaitoan";
-    player.score = 20;
-    player.playingTime = 100;
+    // strcpy(player.userName, "thaitoan");
+    // player.score = 20;
+    // player.playingTime = 100;
 
     fstream loadUser;
 
-    loadUser.open(LIST_USER_FILE, ios::out | ios::binary);
-    loadUser.write((char *) &player, sizeof(user));
-    loadUser.close();
-
-    // loadUser.open("user_list.bin", ios::in | ios::binary);
-    // loadUser.read((char*) &player, sizeof(user));
+    // loadUser.open(LIST_USER_FILE, ios::out | ios::binary);
+    // loadUser.write((char *)&player, sizeof(user));
     // loadUser.close();
 
-    // std::cout << player.score;
-    // int numberOfUser = countNumberOfUser(loadUser);
+    // strcpy(player.userName, "thanhthanh");
+    // player.score = 20;
+    // player.playingTime = 120;
+
+    // loadUser.open(LIST_USER_FILE, ios::app | ios::binary);
+    // loadUser.write((char *)&player, sizeof(user));
+    // loadUser.close();
+
+    int numberOfUser = countNumberOfUser(loadUser);
 
     // cout << numberOfUser;
-    user *userList = new user[1];
-    loadFileUserList(loadUser, userList, 1);
 
-    cout << userList[0].userName;
+    
+    user *userList = new user[numberOfUser];
+    loadFileUserList(loadUser, userList, numberOfUser);
+    // for (int i = 0; i < numberOfUser; i++)
+    //     cout << userList[i].userName << endl;
 
-#if (0)
+// #if (0)
 
     fstream input, output;
     int bestScore;
@@ -54,16 +59,16 @@ int main()
             playGame(undo, redo, board, size, player, bestScore, choice, isOpenUndo);
             saveBestScore(output, player.score, bestScore);
 
-            input.open(LIST_USER_FILE, ios::app | ios::binary);
-            input.write((char *)&player, sizeof(user));
-            input.close();
+            loadUser.open(LIST_USER_FILE, ios::app | ios::binary);
+            loadUser.write((char *)&player, sizeof(user));
+            loadUser.close();
 
             // numberOfUser++;
             // delete[] userList;
             // userList = new user[numberOfUser];
             // userList[numberOfUser] = player;
             // sortScore(userList, numberOfUser);
-            // addUserInFile(loadUser, userList);
+            // addUserInFile(loadUser, userList, (numberOfUser > 20) ? 20 : numberOfUser);
         }
 
         if (choice == '3' || choice == '4')
@@ -79,6 +84,6 @@ int main()
             startMenu(choice, size, player, userList, numberOfUser, isOpenUndo);
         }
     }
-#endif
+// #endif
     return 0;
 }
