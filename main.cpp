@@ -12,41 +12,19 @@ int main()
     Stack undo, redo;
     bool isOpenUndo = false;
 
-    // strcpy(player.userName, "thaitoan");
-    // player.score = 20;
-    // player.playingTime = 100;
-
     fstream loadUser;
-
-    // loadUser.open(LIST_USER_FILE, ios::out | ios::binary);
-    // loadUser.write((char *)&player, sizeof(user));
-    // loadUser.close();
-
-    // strcpy(player.userName, "thanhthanh");
-    // player.score = 20;
-    // player.playingTime = 120;
-
-    // loadUser.open(LIST_USER_FILE, ios::app | ios::binary);
-    // loadUser.write((char *)&player, sizeof(user));
-    // loadUser.close();
-
     int numberOfUser = countNumberOfUser(loadUser);
-
-    // cout << numberOfUser;
-
-    
     user *userList = new user[numberOfUser];
     loadFileUserList(loadUser, userList, numberOfUser);
     // for (int i = 0; i < numberOfUser; i++)
     //     cout << userList[i].userName << endl;
 
-// #if (0)
-
     fstream input, output;
     int bestScore;
     bestScore = getBestScore(input);
 
-    // initializeGame(undo, board, size, player, bestScore, isOpenUndo);
+
+// #if (0)
     // playGame(undo, redo, board, size, player, bestScore, choice, isOpenUndo);
 
     startMenu(choice, size, player, userList, numberOfUser, isOpenUndo);
@@ -59,16 +37,22 @@ int main()
             playGame(undo, redo, board, size, player, bestScore, choice, isOpenUndo);
             saveBestScore(output, player.score, bestScore);
 
-            loadUser.open(LIST_USER_FILE, ios::app | ios::binary);
-            loadUser.write((char *)&player, sizeof(user));
-            loadUser.close();
+            // loadUser.open(LIST_USER_FILE, ios::app | ios::binary);
+            // loadUser.write((char *)&player, sizeof(user));
+            // loadUser.close();
+
+            saveUserList(userList, numberOfUser, player);
+            addUserInFile(loadUser, userList, (numberOfUser > 20) ? 20 : numberOfUser);
+
 
             // numberOfUser++;
             // delete[] userList;
             // userList = new user[numberOfUser];
-            // userList[numberOfUser] = player;
-            // sortScore(userList, numberOfUser);
-            // addUserInFile(loadUser, userList, (numberOfUser > 20) ? 20 : numberOfUser);
+            // loadFileUserList(loadUser, userList, numberOfUser);
+            // userList[numberOfUser - 1] = player;
+
+            // !sortScore(userList, numberOfUser);
+            // !addUserInFile(loadUser, userList, (numberOfUser > 20) ? 20 : numberOfUser);
         }
 
         if (choice == '3' || choice == '4')
@@ -78,12 +62,15 @@ int main()
 
         if (choice == '5')
         {
-            deleteMatrix(board, size);
-            undo.clear();
-            redo.clear();
+            // todo: neu bam exit thi xoa board
+                deleteMatrix(board, size);
+                undo.clear();
+                redo.clear();
+            // todo: neu bam resume thi tiep tuc 
             startMenu(choice, size, player, userList, numberOfUser, isOpenUndo);
         }
     }
+    // delete[] userList;
 // #endif
     return 0;
 }

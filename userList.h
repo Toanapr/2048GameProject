@@ -28,5 +28,6 @@ int countNumberOfUser(std::fstream &input);
 char* getPlayingTime(int time);
 void sortScore(user *&listUser, int numberOfUser);
 void formatName(char* name);
+void saveUserList(user *&listUser, int &numberOfUser, user player);
 
 #endif

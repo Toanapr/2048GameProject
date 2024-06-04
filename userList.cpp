@@ -40,8 +40,12 @@ void sortScore(user *&listUser, int numberOfUser)
 {
     for (int i = 0; i < numberOfUser; i++)
         for (int j = i + 1; j < numberOfUser; j++)
+        {
             if (listUser[i].score < listUser[j].score)
                 swap(listUser[i], listUser[j]);
+            else if (listUser[i].score == listUser[j].score && listUser[i].playingTime > listUser[j].playingTime)
+                swap(listUser[i], listUser[j]);
+        }
 }
 
 void formatName(char* name)
@@ -168,4 +172,16 @@ char* getPlayingTime(int time)
 
     sprintf(res, "%02d:%02d:%02d", hours, minutes, seconds);
     return res;
+}
+
+void saveUserList(user *&listUser, int &numberOfUser, user player)
+{
+    std::fstream output;
+    numberOfUser++;
+    delete[] listUser;
+    listUser = new user[numberOfUser];
+    loadFileUserList(output, listUser, numberOfUser);
+    listUser[numberOfUser - 1] = player;
+    sortScore(listUser, numberOfUser);
+    // addUserInFile(output, listUser, (numberOfUser > 20) ? 20 : numberOfUser);
 }
