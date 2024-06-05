@@ -1,7 +1,5 @@
 #include "2048.h"
 
-
-
 int countNumberOfUser(std::fstream &input)
 {
     input.open(LIST_USER_FILE, ios::in);
@@ -136,7 +134,7 @@ void enterUserName(user *listUser, int numberOfUser, char* name)
 void printTop20Score(user *listUser, int numberOfUser)
 {
     
-    sortScore(listUser, numberOfUser);
+    // sortScore(listUser, numberOfUser);
 
     std::cout << "       TOP 20 USER WITH THE HIGHEST SCORE" << std::endl;
     std::cout << std::setw(5) << std::left << "STT";
