@@ -57,7 +57,7 @@ bool isExistUserName(user *listUser, int numberOfUser, const char* name)
 {
     for (int i = 0; i < numberOfUser; i++)
     {
-        formatName(listUser[i].userName);
+        // formatName(listUser[i].userName);
         if (strcmp(name, listUser[i].userName) == 0)
             return true;
     }
@@ -110,13 +110,16 @@ bool isValidName(const char* name)
 
 void enterUserName(user *listUser, int numberOfUser, char* name)
 {
+    fstream loadResume;
+    resume *resumeList = new resume[5];
+    loadResumeFile(resumeList);
+
     std::cout << "Enter the name (Note: name from 6 to 30 characters including lowercase letters, uppercase letters, numbers, spaces and the character _): ";
     std::cin.ignore();
     std::cin.getline(name, MAX_NAME_LENGTH);
     normalize(name);
     
-
-    while (isExistUserName(listUser, numberOfUser, name) || !isValidName(name))
+    while (isExistUserName(listUser, numberOfUser, name) || !isValidName(name) || isExistResume(resumeList, name))
     {
         system("cls");
         std::cout << "User name already exists or User name is not valid, please enter another user name!" << std::endl;
@@ -125,8 +128,8 @@ void enterUserName(user *listUser, int numberOfUser, char* name)
         normalize(name);
     }
 
-    while (strlen(name) < 30)
-        strcat(name, "*");
+    // while (strlen(name) < 30)
+    //     strcat(name, "*");
 }
 
 
@@ -134,7 +137,7 @@ void enterUserName(user *listUser, int numberOfUser, char* name)
 void printTop20Score(user *listUser, int numberOfUser)
 {
     
-    // sortScore(listUser, numberOfUser);
+    sortScore(listUser, numberOfUser);
 
     std::cout << "       TOP 20 USER WITH THE HIGHEST SCORE" << std::endl;
     std::cout << std::setw(5) << std::left << "STT";
@@ -150,25 +153,26 @@ void printTop20Score(user *listUser, int numberOfUser)
     
     for (int i = 0; i < numberOfUser; i++)
     {
-        formatName(listUser[i].userName);
-        std::cout << std::setw(5) << i + 1
-                  << std::setw(30) << std::left << listUser[i].userName
-                  << std::setw(10) << std::left << listUser[i].score
-                  << std::setw(10) << std::left << getPlayingTime(listUser[i].playingTime) << std::endl;
+        // formatName(listUser[i].userName);
+        std::cout << std::setw(5) << i + 1;
+        std::cout << std::setw(30) << std::left << listUser[i].userName;
+        std::cout << std::setw(10) << std::left << listUser[i].score;
+        std::cout << std::setw(10) << std::left << getTime(listUser[i].playingTime) << std::endl;
     }
 
     cout << std::right;
 }
 
-char* getPlayingTime(int time)
+std::string getTime(int time)
 {
-    char* res;
+    std::string res;
     
     int hours = static_cast<int>(time / 3600);
     int minutes = static_cast<int>((time % 3600) / 60);
     int seconds = static_cast<int>(time % 60);
 
-    sprintf(res, "%02d:%02d:%02d", hours, minutes, seconds);
+    res = (hours < 10 ? "0" + std::to_string(hours) : std::to_string(hours)) + ":" + (minutes < 10 ? "0" + std::to_string(minutes) : std::to_string(minutes)) + ":" + (seconds < 10 ? "0" + std::to_string(seconds) : std::to_string(seconds));
+    
     return res;
 }
 

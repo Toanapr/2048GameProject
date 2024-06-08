@@ -1,64 +1,71 @@
 #include "2048.h"
 
-void loadResumeFile(resume *&r)
+void loadResumeFile(resume *&resumeList)
 {
     fstream input;
     string file = "RESUME_FILE";
     for (int i = 0; i < 5; i++)
     {
         input.open(file + to_string(i) + ".bin", ios::in | ios::binary);
-        input.read((char *)&r[i], sizeof(resume));
+        input.read((char *)&resumeList[i], sizeof(resume));
         input.close();
     }
 }
 
-void saveResume(resume *r)
+void saveResume(resume *resumeList)
 {
     fstream output;
     string file = "RESUME_FILE";
     for (int i = 0; i < 5; i++)
     {
         output.open(file + to_string(i) + ".bin", ios::out | ios::binary);
-        output.write((char *)&r[i], sizeof(resume));
+        output.write((char *)&resumeList[i], sizeof(resume));
         output.close();
     }
 }
 
-int getResumeEmpty(resume *r, char *name)
+int getResumeEmpty(resume *resumeList, char *name)
 {
     for (int i = 0; i < 5; i++)
-        if (strcmp(r[i].player.userName, name) == 0)
+        if (strcmp(resumeList[i].player.userName, name) == 0)
             return i;
 
     for (int i = 0; i < 5; i++)
-        if (r[i].size == 0)
+        if (resumeList[i].size == 0)
             return i;
     return -1;
 }
 
-void changeResume(resume *&r, int index, int **board, int size, user player, Stack undo, Stack redo, bool isOpenUndo)
+void changeResume(resume *&resumeList, int index, int **board, int size, user player, Stack undo, Stack redo, bool isOpenUndo)
 {
-    r[index - 1].size = size;
+    resumeList[index - 1].size = size;
     for (int i = 0; i < size; i++)
         for (int j = 0; j < size; j++)
-            r[index - 1].board[i][j] = board[i][j];
-    r[index - 1].player = player;
-    r[index - 1].isOpenUndo = isOpenUndo;
-    // r[index - 1].undo = undo;
-    // r[index - 1].redo = redo;
+            resumeList[index - 1].board[i][j] = board[i][j];
+    resumeList[index - 1].player = player;
+    resumeList[index - 1].isOpenUndo = isOpenUndo;
+    // resumeList[index - 1].undo = undo;
+    // resumeList[index - 1].redo = redo;
 }
 
-void printResume(resume *r)
+void printResume(resume *resumeList)
 {
     for (int i = 0; i < 5; i++)
     {
         cout << i + 1 << ". ";
-        if (r[i].size == 0)
+        if (resumeList[i].size == 0)
             cout << "Empty" << endl;
         else
         {
-            formatName(r[i].player.userName);
-            cout << r[i].player.userName << endl;
+            formatName(resumeList[i].player.userName);
+            cout << resumeList[i].player.userName << endl;
         }
     }
+}
+bool isExistResume(resume *resumeList, char *name)
+{
+    for (int i = 0; i < 5; i++)
+        if (strcmp(resumeList[i].player.userName, name) == 0)
+            return true;
+    return false;
 }

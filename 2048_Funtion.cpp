@@ -249,7 +249,7 @@ void printUI(int **board, int size, user player, int &bestScore, bool isOpenUndo
 
     cout << "Score: " << player.score;
     cout << "\t Best: " << bestScore << endl;
-    formatName(player.userName);
+    // formatName(player.userName);
     cout << "Name: " << player.userName << endl;
     cout << BORDER_COLOR;
     cout << char(218);
@@ -342,7 +342,7 @@ void printUI(int **board, int size, user player, int &bestScore, bool isOpenUndo
     else
     {
         cout << " w : Up    a : Left \n s : Down  d : Right \n q : exit";
-        cout << "\nPress the key to play and continue.";
+        cout << "\nPress the key to play and continue.\n";
     }
 }
 int countEmptyPosition(int **board, int size)
@@ -398,7 +398,17 @@ void redoProcess(Stack &undo, Stack &redo, int **&board, int size, int &score)
     score = temp->data.score;
     redo.pop();
 }
-void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int &bestScore, char &choice, bool isOpenUndo, resume *&r)
+
+bool isHaveAlpha(string s)
+{
+    bool check = true;
+    for (int i = 0; i < s.size(); i++)
+        if (isdigit(s[i]) == 0)
+            check = false;
+    return check;
+}
+
+void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int &bestScore, char &choice, bool isOpenUndo, resume *&resumeList)
 {
     char x;
     bool canMove = false;
@@ -424,17 +434,21 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
             char m;
 
             for (int i = 0; i < 5; i++)
-                if (strcmp(r[i].player.userName, player.userName) == 0)
+            {
+                formatName(resumeList[i].player.userName);
+                if (strcmp(resumeList[i].player.userName, player.userName) == 0)
                     isResumed = true;
+            }
+
             if (isResumed == false)
             {
-                cout << "Do you want to save the game to resume later? (press y: yes or n: no)" << endl;
-                cin >> m;
+                cout << "\nDo you want to save the game to resume later? (press y: yes or n: no)" << endl;
+                m = getch();
                 while (m != 'y' && m != 'n')
                 {
                     system("cls");
                     cout << "Invalid, please enter choice again (press y: yes or n: no):  ";
-                    cin >> m;
+                    m = getch();
                 }
             }
             else
@@ -442,48 +456,45 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
 
             if (m == 'y')
             {
-                int index = getResumeEmpty(r, player.userName);
+                int index = getResumeEmpty(resumeList, player.userName);
                 if (index == -1)
                 {
                     system("cls");
-                    cout << "The resume is full. Please delete one to save the game.";
-                    printResume(r);
+                    printResume(resumeList);
+                    cout << "\nThe resume is full. Please delete one to save the game: ";
                     char n;
-                    cin >> n;
+                    n = getch();
+                    // // while (isHaveAlpha(n) == false || stoi(n) < 1 || stoi(n) > 5)
                     while (n != '1' && n != '2' && n != '3' && n != '4' && n != '5')
                     {
                         system("cls");
-                        printResume(r);
+                        printResume(resumeList);
                         cout << "Invalid, please enter the number of the game you want to delete: ";
-                        cin >> n;
+                        n = getch();
                     }
-                    changeResume(r, n - '0', board, size, player, undo, redo, isOpenUndo);
+                    changeResume(resumeList, n - '0', board, size, player, undo, redo, isOpenUndo);
                     system("cls");
                     cout << "Change the user's resume successfully.";
                     Sleep(1200);
-                    choice = '5';
+                    choice = '0';
                     break;
                 }
                 else
                 {
-                    changeResume(r, index + 1, board, size, player, undo, redo, isOpenUndo);
+                    changeResume(resumeList, index + 1, board, size, player, undo, redo, isOpenUndo);
                     cout << "The game has been saved successfully.";
                     Sleep(1200);
-                    choice = '5';
+                    choice = '0';
                     break;
                 }
             }
             else
             {
-                choice = '5';
+                choice = '0';
                 system("cls");
 
                 if (continuePlayWin == false) // khi da thang ma tiep tuc choi thi khong luu tru thong tin
                 {
-                    end_time = std::chrono::high_resolution_clock::now();
-                    duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
-                    player.playingTime = duration.count();
-
                     // TODO: LUU TRU THONG TIN NGUOI CHOI NEU DAT TOP 20
                 }
 
@@ -549,12 +560,12 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
 
             cout << "Do you want to continue? (press y: yes or n: no)" << endl;
             char m;
-            cin >> m;
+            m = getch();
             while (m != 'y' && m != 'n')
             {
                 system("cls");
                 cout << "Invalid, please enter choice again (press y: yes or n: no):  ";
-                cin >> m;
+                m = getch();
             }
 
             if (m == 'y')
@@ -565,13 +576,10 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
             }
             else
             {
-                end_time = std::chrono::high_resolution_clock::now();
-                duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
-                player.playingTime = duration.count();
 
                 // TODO: LUU TRU THONG TIN NGUOI CHOI NEU DAT TOP 20
 
-                choice = '5';
+                choice = '0';
                 break;
             }
         }
@@ -594,12 +602,12 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
 
             cout << "Do you want to continue (use Undo to continue play)? (press y: yes or n: no)" << endl;
             char m;
-            cin >> m;
+            m = getch();
             while (m != 'y' && m != 'n')
             {
                 system("cls");
                 cout << "Invalid, please enter choice again (press y: yes or n: no):  ";
-                cin >> m;
+                m = getch();
             }
 
             if (m == 'y')
@@ -611,27 +619,21 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
             }
             else
             {
-                end_time = std::chrono::high_resolution_clock::now();
-                duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
-                player.playingTime = duration.count();
 
                 // TODO: LUU TRU THONG TIN NEU NGUOI CHOI DAT TOP 20
 
-                choice = '5';
+                choice = '0';
                 break;
             }
         }
     }
+
+    end_time = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
+    player.playingTime = duration.count();
 }
-bool isHaveAlpha(string s)
-{
-    bool check = true;
-    for (int i = 0; i < s.size(); i++)
-        if (isdigit(s[i]) == 0)
-            check = false;
-    return check;
-}
-void startMenu(char &choice, int &size, user &player, user *userList, int numberOfUser, bool &isOpenUndo, resume *&r, int &index)
+
+void startMenu(char &choice, int &size, user &player, user *userList, int numberOfUser, bool &isOpenUndo, resume *&resumeList, int &index)
 {
     system("cls");
     cout << "" << endl;
@@ -644,8 +646,11 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
     cout << "Enter Choice (press number and enter): ";
 
     // enter again when press another
-    cin >> choice;
+    
+    choice = getch();
+    // //while (isHaveAlpha(choice_s) == false || stoi(choice_s) < 1 || stoi(choice_s) > 5)
     while (choice != '1' && choice != '2' && choice != '3' && choice != '4' && choice != '5')
+
     {
         system("cls");
         cout << "WELCOME TO 2048!!!" << endl;
@@ -655,7 +660,7 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
         cout << "   4. Setting" << endl;
         cout << "   5. Exit" << endl;
         cout << "Invalid, please enter choice again: ";
-        cin >> choice;
+        choice = getch();
     }
 
     // exit game
@@ -692,22 +697,21 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
     {
         system("cls");
 
-        printResume(r);
-        cout << endl
-             << "6. Exit" << endl;
+        printResume(resumeList);
+        cout << "\n6. Exit\n";
         cout << "Enter the number of the game you want to resume: ";
         string m;
-        cin >> m;
-        r[5].size = -1;
-        while (isHaveAlpha(m) == false || stoi(m) < 1 || stoi(m) > 7 || r[stoi(m) - 1].size == 0)
+        m = getch();
+        resumeList[5].size = -1;
+        // while (m != '1' && m != '2' && m != '3' && m != '4' && m != '5' && m != '6' && resumeList[m - '0' - 1].size == 0)
+        while (isHaveAlpha(m) == false || stoi(m) < 1 || stoi(m) > 7 || resumeList[stoi(m) - 1].size == 0)
         {
             system("cls");
-            printResume(r);
-            cout << endl
-                 << "6. Exit" << endl;
+            printResume(resumeList);
+            cout << "\n6. Exit\n";
 
             cout << "Invalid, please enter the number of the game you want to resume again: ";
-            cin >> m;
+            m = getch();
         }
 
         index = stoi(m);
@@ -734,12 +738,13 @@ void settingGame(int &size, bool &isOpenUndo)
     char choice;
     while (true)
     {
-        cin >> choice;
+        choice = getch();
+        // // while (isHaveAlpha(choice_s) == false || stoi(choice_s) < 1 || stoi(choice_s) > 3)
         while (choice != '1' && choice != '2' && choice != '3')
         {
             system("cls");
             cout << "Invalid! Please choice again: ";
-            cin >> choice;
+            choice = getch();
         }
 
         if (choice == '3')
@@ -775,12 +780,12 @@ void settingGame(int &size, bool &isOpenUndo)
             system("cls");
             cout << "Do you want to open undo and redo mode? (press y : yes or n : no)\n";
             char tmp;
-            cin >> tmp;
+            tmp = getch();
             while (tmp != 'y' && tmp != 'n')
             {
                 system("cls");
                 cout << "Invalid, please enter again: ";
-                cin >> tmp;
+                tmp = getch();
             }
 
             if (tmp == 'y')

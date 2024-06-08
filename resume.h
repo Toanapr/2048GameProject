@@ -29,10 +29,11 @@ struct resume
     }
 };
 
-void loadResumeFile(resume *&r);
-void saveResume(resume *r);
-int getResumeEmpty(resume *r, char *name);
-void changeResume(resume *&r, int index, int **board, int size, user player, Stack undo, Stack redo, bool isOpenUndo);
-void printResume(resume *r);
+void loadResumeFile(resume *&resumeList);
+void saveResume(resume *resumeList);
+int getResumeEmpty(resume *resumeList, char *name);
+void changeResume(resume *&resumeList, int index, int **board, int size, user player, Stack undo, Stack redo, bool isOpenUndo);
+void printResume(resume *resumeList);
+bool isExistResume(resume *resumeList, char *name);
 
 #endif

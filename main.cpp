@@ -25,34 +25,37 @@ int main()
 
     fstream loadResume;
     int index;
-    resume *r = new resume[5];
-    loadResumeFile(r);
+    resume *resumeList = new resume[5];
+    loadResumeFile(resumeList);
 
     // for (int i = 0; i < 5; i++)
-    //     cout << r[i].player.userName << endl;
+    //     cout << resumeList[i].player.userName << endl;
 
-    // cout << r[0].size << endl;
-    // size = r[0].size;
+    // cout << resumeList[0].size << endl;
+    // size = resumeList[0].size;
+
+    // board = allocateMatrix(size);
     // for (int i = 0; i < size; i++)
     //     for (int j = 0; j < size; j++)
     //     {
-    //         int x = r[0].board[i][j];
+    //         int x = resumeList[0].board[i][j];
     //         board[i][j] = x;
     //     }
-    // player = r[0].player;
+    // player = resumeList[0].player;
     // printUI(board, size, player, bestScore, isOpenUndo);
-    // cout << r[0].size;
+    
+    // cout << resumeList[0].size;
     // for (int i = 0; i < 4; i++)
     // {
     //     for (int j = 0; j < 4; j++)
-    //         cout << r[0].board[i][j] << " ";
+    //         cout << resumeList[0].board[i][j] << " ";
     //     cout << endl;
     // }
 
     // #if (0)
     // playGame(undo, redo, board, size, player, bestScore, choice, isOpenUndo);
 
-    startMenu(choice, size, player, userList, numberOfUser, isOpenUndo, r, index);
+    startMenu(choice, size, player, userList, numberOfUser, isOpenUndo, resumeList, index);
     board = allocateMatrix(size);
     initializeGame(undo, board, size, player, bestScore, isOpenUndo);
 
@@ -62,22 +65,41 @@ int main()
         if (choice == '1' && index != 6)
         {
             deleteMatrix(board, size);
-            // size = r[index - 1].size;
-            board = allocateMatrix(r[index - 1].size);
+            // size = resumeList[index - 1].size;
+            board = allocateMatrix(resumeList[index - 1].size);
 
-            for (int i = 0; i < r[index - 1].size; i++)
-                for (int j = 0; j < r[index - 1].size; j++)
-                    board[i][j] = r[index - 1].board[i][j];
-            player = r[index - 1].player;
-            // undo = r[index - 1].undo;
-            // redo = r[index - 1].redo;
-            isOpenUndo = r[index - 1].isOpenUndo;
-            // cout << size << endl;
-            printUI(board, r[index - 1].size, player, bestScore, isOpenUndo);
-            playGame(undo, redo, board, r[index - 1].size, player, bestScore, choice, isOpenUndo, r);
-            saveResume(r);
-            saveUserList(userList, numberOfUser, player);
-            addUserInFile(loadUser, userList, (numberOfUser > 20) ? 20 : numberOfUser);
+            for (int i = 0; i < resumeList[index - 1].size; i++)
+                for (int j = 0; j < resumeList[index - 1].size; j++)
+                    board[i][j] = resumeList[index - 1].board[i][j];
+            player = resumeList[index - 1].player;
+            int timeBefore = player.playingTime;
+            // undo = resumeList[index - 1].undo;
+            // redo = resumeList[index - 1].redo;
+            isOpenUndo = false;
+
+            printUI(board, resumeList[index - 1].size, player, bestScore, isOpenUndo);
+            playGame(undo, redo, board, resumeList[index - 1].size, player, bestScore, choice, isOpenUndo, resumeList);
+            player.playingTime += timeBefore;
+            saveResume(resumeList);
+
+            bool isExist = false;
+            for (int i = 0; i < numberOfUser; i++)
+                if (strcmp(userList[i].userName, player.userName) == 0)
+                {
+                    userList[i] = player;
+                    isExist = true;
+                    break;
+                }
+        
+            if (!isExist)
+            {
+                saveUserList(userList, numberOfUser, player);
+                addUserInFile(loadUser, userList, (numberOfUser > 20) ? 20 : numberOfUser);
+            }
+            else
+            {
+                addUserInFile(loadUser, userList, (numberOfUser > 20) ? 20 : numberOfUser);
+            }
         }
 
         if (choice == '2')
@@ -87,10 +109,10 @@ int main()
             initializeGame(undo, board, size, player, bestScore, isOpenUndo);
 
             printUI(board, size, player, bestScore, isOpenUndo);
-            playGame(undo, redo, board, size, player, bestScore, choice, isOpenUndo, r);
+            playGame(undo, redo, board, size, player, bestScore, choice, isOpenUndo, resumeList);
             saveBestScore(output, player.score, bestScore);
 
-            saveResume(r);
+            saveResume(resumeList);
 
             // loadUser.open(LIST_USER_FILE, ios::app | ios::binary);
             // loadUser.write((char *)&player, sizeof(user));
@@ -111,20 +133,22 @@ int main()
 
         if (choice == '3' || choice == '4' || index == 6)
         {
-            startMenu(choice, size, player, userList, numberOfUser, isOpenUndo, r, index);
+            startMenu(choice, size, player, userList, numberOfUser, isOpenUndo, resumeList, index);
         }
 
-        if (choice == '5')
+        if (choice == '0')
         {
-            // todo: neu bam exit thi xoa board
-            // deleteMatrix(board, size);
-            // undo.clear();
-            // redo.clear();
-            // todo: neu bam resume thi tiep tuc
-            startMenu(choice, size, player, userList, numberOfUser, isOpenUndo, r, index);
+            startMenu(choice, size, player, userList, numberOfUser, isOpenUndo, resumeList, index);
         }
     }
-    // delete[] userList;
+
+    // giai phong bo nho
+    delete[] userList;
+    deleteMatrix(board, size);
+    delete[] resumeList;
+    undo.clear();
+    redo.clear();
+
     // #endif
     return 0;
 }
