@@ -26,9 +26,11 @@ const string BLUE = "\033[1;34m";
 const string GREEN = "\033[1;32m";
 const string YELLOW = "\033[1;33m";
 const string CYAN = "\033[1;36m";
+const string MAGENTA = "\033[1;35m";
 const string RESET = "\033[0m";
+const string BOLD = "\033[1m";
+const string UNDERLINE = "\033[4m";
 
-int **allocateMatrix(int size);
 void swap(int *a, int *b);
 void moveLeft(int **board, int size, bool &canMove, int &score);
 void moveRight(int **board, int size, bool &canMove, int &score);

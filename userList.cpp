@@ -46,14 +46,14 @@ void sortScore(user *&listUser, int numberOfUser)
         }
 }
 
-void formatName(char* name)
+void formatName(char *name)
 {
-    char* pos = strchr(name, '*');
+    char *pos = strchr(name, '*');
     if (pos)
         *pos = '\0';
 }
 
-bool isExistUserName(user *listUser, int numberOfUser, const char* name)
+bool isExistUserName(user *listUser, int numberOfUser, const char *name)
 {
     for (int i = 0; i < numberOfUser; i++)
     {
@@ -65,7 +65,7 @@ bool isExistUserName(user *listUser, int numberOfUser, const char* name)
     return false;
 }
 
-void normalize(char* name)
+void normalize(char *name)
 {
     int len = strlen(name);
     int start = 0, end = len - 1;
@@ -84,8 +84,8 @@ void normalize(char* name)
     memmove(name, name + start, end - start + 1);
     name[end - start + 1] = '\0';
 
-    char* dest = name;
-    for (char* src = name; *src; src++)
+    char *dest = name;
+    for (char *src = name; *src; src++)
     {
         *dest = *src;
         if (*src != ' ' || (dest > name && *(dest - 1) != ' '))
@@ -94,7 +94,7 @@ void normalize(char* name)
     *dest = '\0';
 }
 
-bool isValidName(const char* name)
+bool isValidName(const char *name)
 {
     int sizeName = strlen(name);
 
@@ -108,22 +108,26 @@ bool isValidName(const char* name)
     return true;
 }
 
-void enterUserName(user *listUser, int numberOfUser, char* name)
+void enterUserName(user *listUser, int numberOfUser, char *name)
 {
     fstream loadResume;
     resume *resumeList = new resume[5];
     loadResumeFile(resumeList);
 
     std::cout << "Enter the name (Note: name from 6 to 30 characters including lowercase letters, uppercase letters, numbers, spaces and the character _): ";
+    cout << BLUE;
     std::cin.getline(name, MAX_NAME_LENGTH);
+    cout << RESET;
     normalize(name);
-    
+
     while (isExistUserName(listUser, numberOfUser, name) || !isValidName(name) || isExistResume(resumeList, name))
     {
         system("cls");
-        std::cout << "User name already exists or User name is not valid, please enter another user name!" << std::endl;
-        std::cout << "Enter the name: ";
+        std::cout << RED << "User name already exists or User name is not valid, please enter another user name!" << std::endl;
+        std::cout << "Enter the name: " << RESET;
+        cout << BLUE;
         std::cin.getline(name, MAX_NAME_LENGTH);
+        cout << RESET;
         normalize(name);
     }
 
@@ -131,32 +135,36 @@ void enterUserName(user *listUser, int numberOfUser, char* name)
     //     strcat(name, "*");
 }
 
-
-
 void printTop20Score(user *listUser, int numberOfUser)
 {
-    
+
     sortScore(listUser, numberOfUser);
 
-    std::cout << "       TOP 20 USER WITH THE HIGHEST SCORE" << std::endl;
-    std::cout << std::setw(5) << std::left << "STT";
+    std::cout << YELLOW << "        TOP 20 USER WITH THE HIGHEST SCORE" << RESET << std::endl;
+    std::cout << RED << std::setw(5) << std::left << "STT";
     std::cout << std::setw(30) << std::left << "Name";
     std::cout << std::setw(10) << std::left << "Score";
-    std::cout << std::setw(10) << std::left << "Time" << std::endl;
-
+    std::cout << std::setw(10) << std::left << "Time" << RESET << std::endl;
+    
+    cout << BOLD;
     std::cout << std::setfill('-');
-    std::cout << std::setw(55) << "-" << std::endl;
+    std::cout << std::setw(54) << "-" << std::endl;
     std::cout << std::setfill(' ');
+    cout << RESET;
 
     numberOfUser = (numberOfUser > 20) ? 20 : numberOfUser;
-    
+
     for (int i = 0; i < numberOfUser; i++)
     {
         // formatName(listUser[i].userName);
         std::cout << std::setw(5) << i + 1;
-        std::cout << std::setw(30) << std::left << listUser[i].userName;
+        if (i < 3)
+            cout << "\033[0;34m";
+        else 
+            cout << "\033[0;36m";
+        std::cout << std::setw(30) << std::left << listUser[i].userName << RESET;
         std::cout << std::setw(10) << std::left << listUser[i].score;
-        std::cout << std::setw(10) << std::left << getTime(listUser[i].playingTime) << std::endl;
+        std::cout << std::setw(10) << std::left << getTime(listUser[i].playingTime) << RESET << std::endl;
     }
 
     cout << std::right;
@@ -165,13 +173,13 @@ void printTop20Score(user *listUser, int numberOfUser)
 std::string getTime(int time)
 {
     std::string res;
-    
+
     int hours = static_cast<int>(time / 3600);
     int minutes = static_cast<int>((time % 3600) / 60);
     int seconds = static_cast<int>(time % 60);
 
     res = (hours < 10 ? "0" + std::to_string(hours) : std::to_string(hours)) + ":" + (minutes < 10 ? "0" + std::to_string(minutes) : std::to_string(minutes)) + ":" + (seconds < 10 ? "0" + std::to_string(seconds) : std::to_string(seconds));
-    
+
     return res;
 }
 

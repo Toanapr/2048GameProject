@@ -5,12 +5,23 @@ void createList(List &l)
     l.pHead = new Node;
     l.pHead = NULL;
 }
+
+int **allocateMatrix(int size)
+{
+    int **board = new int *[size];
+    for (int i = 0; i < size; i++)
+        board[i] = new int[size];
+
+    return board;
+}
+
 void copyValueMatrix(int **a, int **&b, int size)
 {
     for (int i = 0; i < size; i++)
         for (int j = 0; j < size; j++)
             b[i][j] = a[i][j];
 }
+
 Node *createNode(dataOfNode _data)
 {
     Node *temp = new Node;

@@ -1,8 +1,11 @@
 #include "2048.h"
 
+
 int main()
 {
-    system("cls");
+
+
+    // system("cls");
     srand(time(0));
 
     int **board;
@@ -26,19 +29,16 @@ int main()
     resume *resumeList = new resume[5];
     loadResumeFile(resumeList);
 
-    // #if (0)
-    // playGame(undo, redo, board, size, player, bestScore, choice, isOpenUndo);
+
+// #if (0)
 
     startMenu(choice, size, player, userList, numberOfUser, isOpenUndo, resumeList, index);
-    // board = allocateMatrix(size);
-    // initializeGame(undo, board, size, player, bestScore, isOpenUndo);
 
     while (choice != '5')
     {
 
         if (choice == '1' && index != 6)
         {
-            // deleteMatrix(board, size);
             board = allocateMatrix(resumeList[index - 1].size);
 
             for (int i = 0; i < resumeList[index - 1].size; i++)
@@ -46,21 +46,13 @@ int main()
                     board[i][j] = resumeList[index - 1].board[i][j];
             player = resumeList[index - 1].player;
             int timeBefore = player.playingTime;
-            isOpenUndo = false;
 
-            printUI(board, resumeList[index - 1].size, player, bestScore, isOpenUndo);
-            playGame(undo, redo, board, resumeList[index - 1].size, player, bestScore, choice, isOpenUndo, resumeList);
+            printUI(board, resumeList[index - 1].size, player, bestScore, false);
+            playGame(undo, redo, board, resumeList[index - 1].size, player, bestScore, choice, false, resumeList);
             player.playingTime += timeBefore;
             saveResume(resumeList);
 
-            bool isExist = false;
-            for (int i = 0; i < numberOfUser; i++)
-                if (strcmp(userList[i].userName, player.userName) == 0)
-                {
-                    userList[i] = player;
-                    isExist = true;
-                    break;
-                }
+            bool isExist = isExistUserName(userList, numberOfUser, player.userName);
 
             if (!isExist)
             {
@@ -77,7 +69,6 @@ int main()
 
         if (choice == '2')
         {
-            // deleteMatrix(board, size);
             board = allocateMatrix(size);
             undo.clear();
             redo.clear();
@@ -107,12 +98,11 @@ int main()
     }
 
     // giai phong bo nho
-    // deleteMatrix(board, size);
     delete[] userList;
     delete[] resumeList;
     undo.clear();
     redo.clear();
 
-    // #endif
+// #endif
     return 0;
 }

@@ -28,7 +28,7 @@ struct resume
 void loadResumeFile(resume *&resumeList);
 void saveResume(resume *resumeList);
 int getResumeEmpty(resume *resumeList, char *name);
-void changeResume(resume *&resumeList, int index, int **board, int size, user player, bool isOpenUndo);
+void changeResume(resume *&resumeList, int index, int **board, int size, user player);
 void printResume(resume *resumeList);
 bool isExistResume(resume *resumeList, char *name);
 

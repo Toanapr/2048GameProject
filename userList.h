@@ -23,6 +23,7 @@ struct user
 
 void loadFileUserList(std::fstream &input, user *&listUser, int numberOfUser);
 void addUserInFile(std::fstream &output, user *listUser, int numberOfUser);
+bool isExistUserName(user *listUser, int numberOfUser, const char* name);
 void enterUserName(user *listUser, int numberOfUser, char* name);
 void printTop20Score(user *listUser, int numberOfUser);
 int countNumberOfUser(std::fstream &input);

@@ -36,16 +36,13 @@ int getResumeEmpty(resume *resumeList, char *name)
     return -1;
 }
 
-void changeResume(resume *&resumeList, int index, int **board, int size, user player, bool isOpenUndo)
+void changeResume(resume *&resumeList, int index, int **board, int size, user player)
 {
     resumeList[index - 1].size = size;
     for (int i = 0; i < size; i++)
         for (int j = 0; j < size; j++)
             resumeList[index - 1].board[i][j] = board[i][j];
     resumeList[index - 1].player = player;
-    // resumeList[index - 1].isOpenUndo = isOpenUndo;
-    // resumeList[index - 1].undo = undo;
-    // resumeList[index - 1].redo = redo;
 }
 
 void printResume(resume *resumeList)

@@ -31,5 +31,6 @@ void deleteTail(List &l);
 void deleteList(List &l, int n);
 void deleteMatrix(int **&a, int n);
 void copyValueMatrix(int **a, int **&b, int n);
+int **allocateMatrix(int size);
 
 #endif
