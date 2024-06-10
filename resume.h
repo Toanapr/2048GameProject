@@ -14,9 +14,6 @@ struct resume
     int board[10][10];
     int size;
     user player;
-    // Stack undo;
-    // Stack redo;
-    bool isOpenUndo;
 
     resume()
     {
@@ -25,14 +22,13 @@ struct resume
         player.userName[0] = '\0';
         player.score = 0;
         player.playingTime = 0;
-        isOpenUndo = false;
     }
 };
 
 void loadResumeFile(resume *&resumeList);
 void saveResume(resume *resumeList);
 int getResumeEmpty(resume *resumeList, char *name);
-void changeResume(resume *&resumeList, int index, int **board, int size, user player, Stack undo, Stack redo, bool isOpenUndo);
+void changeResume(resume *&resumeList, int index, int **board, int size, user player, bool isOpenUndo);
 void printResume(resume *resumeList);
 bool isExistResume(resume *resumeList, char *name);
 

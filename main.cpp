@@ -16,8 +16,6 @@ int main()
     int numberOfUser = countNumberOfUser(loadUser);
     user *userList = new user[numberOfUser];
     loadFileUserList(loadUser, userList, numberOfUser);
-    // for (int i = 0; i < numberOfUser; i++)
-    //     cout << userList[i].userName << endl;
 
     fstream input, output;
     int bestScore;
@@ -28,44 +26,19 @@ int main()
     resume *resumeList = new resume[5];
     loadResumeFile(resumeList);
 
-    // for (int i = 0; i < 5; i++)
-    //     cout << resumeList[i].player.userName << endl;
-
-    // cout << resumeList[0].size << endl;
-    // size = resumeList[0].size;
-
-    // board = allocateMatrix(size);
-    // for (int i = 0; i < size; i++)
-    //     for (int j = 0; j < size; j++)
-    //     {
-    //         int x = resumeList[0].board[i][j];
-    //         board[i][j] = x;
-    //     }
-    // player = resumeList[0].player;
-    // printUI(board, size, player, bestScore, isOpenUndo);
-    
-    // cout << resumeList[0].size;
-    // for (int i = 0; i < 4; i++)
-    // {
-    //     for (int j = 0; j < 4; j++)
-    //         cout << resumeList[0].board[i][j] << " ";
-    //     cout << endl;
-    // }
-
     // #if (0)
     // playGame(undo, redo, board, size, player, bestScore, choice, isOpenUndo);
 
     startMenu(choice, size, player, userList, numberOfUser, isOpenUndo, resumeList, index);
-    board = allocateMatrix(size);
-    initializeGame(undo, board, size, player, bestScore, isOpenUndo);
+    // board = allocateMatrix(size);
+    // initializeGame(undo, board, size, player, bestScore, isOpenUndo);
 
     while (choice != '5')
     {
 
         if (choice == '1' && index != 6)
         {
-            deleteMatrix(board, size);
-            // size = resumeList[index - 1].size;
+            // deleteMatrix(board, size);
             board = allocateMatrix(resumeList[index - 1].size);
 
             for (int i = 0; i < resumeList[index - 1].size; i++)
@@ -73,8 +46,6 @@ int main()
                     board[i][j] = resumeList[index - 1].board[i][j];
             player = resumeList[index - 1].player;
             int timeBefore = player.playingTime;
-            // undo = resumeList[index - 1].undo;
-            // redo = resumeList[index - 1].redo;
             isOpenUndo = false;
 
             printUI(board, resumeList[index - 1].size, player, bestScore, isOpenUndo);
@@ -90,7 +61,7 @@ int main()
                     isExist = true;
                     break;
                 }
-        
+
             if (!isExist)
             {
                 saveUserList(userList, numberOfUser, player);
@@ -100,12 +71,16 @@ int main()
             {
                 addUserInFile(loadUser, userList, (numberOfUser > 20) ? 20 : numberOfUser);
             }
+
+            deleteMatrix(board, resumeList[index - 1].size);
         }
 
         if (choice == '2')
         {
-            deleteMatrix(board, size);
+            // deleteMatrix(board, size);
             board = allocateMatrix(size);
+            undo.clear();
+            redo.clear();
             initializeGame(undo, board, size, player, bestScore, isOpenUndo);
 
             printUI(board, size, player, bestScore, isOpenUndo);
@@ -114,21 +89,10 @@ int main()
 
             saveResume(resumeList);
 
-            // loadUser.open(LIST_USER_FILE, ios::app | ios::binary);
-            // loadUser.write((char *)&player, sizeof(user));
-            // loadUser.close();
-
             saveUserList(userList, numberOfUser, player);
             addUserInFile(loadUser, userList, (numberOfUser > 20) ? 20 : numberOfUser);
 
-            // numberOfUser++;
-            // delete[] userList;
-            // userList = new user[numberOfUser];
-            // loadFileUserList(loadUser, userList, numberOfUser);
-            // userList[numberOfUser - 1] = player;
-
-            // !sortScore(userList, numberOfUser);
-            // !addUserInFile(loadUser, userList, (numberOfUser > 20) ? 20 : numberOfUser);
+            deleteMatrix(board, size);
         }
 
         if (choice == '3' || choice == '4' || index == 6)
@@ -143,8 +107,8 @@ int main()
     }
 
     // giai phong bo nho
+    // deleteMatrix(board, size);
     delete[] userList;
-    deleteMatrix(board, size);
     delete[] resumeList;
     undo.clear();
     redo.clear();

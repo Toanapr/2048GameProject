@@ -115,7 +115,6 @@ void enterUserName(user *listUser, int numberOfUser, char* name)
     loadResumeFile(resumeList);
 
     std::cout << "Enter the name (Note: name from 6 to 30 characters including lowercase letters, uppercase letters, numbers, spaces and the character _): ";
-    std::cin.ignore();
     std::cin.getline(name, MAX_NAME_LENGTH);
     normalize(name);
     

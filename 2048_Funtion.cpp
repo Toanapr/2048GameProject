@@ -4,7 +4,7 @@ int randomTwoFour()
 {
     int x = rand() % 10 + 1;
     if (x <= 8)
-        return 2;
+        return 1024;
     else
         return 4;
 }
@@ -21,10 +21,8 @@ void saveBestScore(fstream &output, int score, int bestScore)
 {
     output.open(fileBestScore, ios::out | ios::binary);
     if (score >= bestScore)
-        // output << score;
         output.write((char *)&score, sizeof(int));
     else
-        // output << bestScore;
         output.write((char *)&bestScore, sizeof(int));
     output.close();
 }
@@ -182,54 +180,17 @@ void moveUp(int **board, int size, bool &canMove, int &score)
         }
     }
 }
-// void printUI(int **board, int size, user player, int &bestScore, bool isOpenUndo)
-// {
-//     if (board == NULL)
-//         return;
-//     if (bestScore < player.score)
-//         bestScore = player.score;
-//     cout << "Score: " << player.score;
-//     cout << "\t Best: " << bestScore << endl;
-//     cout << "Name: " << player.userName << endl;
-//     for (int k = 0; k < size; k++)
-//         cout << "+-------";
-//     cout << "+" << endl;
-//     for (int i = 0; i < size; i++)
-//     {
-//         for (int j = 0; j < size; j++)
-//         {
-//             if (board[i][j] != 0)
-//                 cout << "|" << setw(4) << board[i][j] << setw(4);
-//             else
-//                 cout << "|" << setw(4) << ' ' << setw(4);
-//         }
-//         cout << "|" << endl;
-//         for (int k = 0; k < size; k++)
-//         {
-//             cout << "+-------";
-//         }
-//         cout << "+" << endl;
-//     }
-//     if (isOpenUndo == true)
-//     {
-//         cout << " w : Up    a : Left \n s : Down  d : Right \n q : exit  z : undo  y : redo\n";
-//         cout << "\nPress the key to play and continue.";
-//     }
-//     else
-//     {
-//         cout << " w : Up    a : Left \n s : Down  d : Right \n q : exit";
-//         cout << "\nPress the key to play and continue.";
-//     }
-// }
+
 void printUI(int **board, int size, user player, int &bestScore, bool isOpenUndo)
 {
     if (board == NULL)
         return;
+
     if (bestScore < player.score)
         bestScore = player.score;
 
     // Define color codes
-    const string RESET = "\033[0m";
+    // const string RESET = "\033[0m";
     const char BOARD = 196;
     const string BORDER_COLOR = "\033[33m";
     const string COLORS[] = {
@@ -249,7 +210,6 @@ void printUI(int **board, int size, user player, int &bestScore, bool isOpenUndo
 
     cout << "Score: " << player.score;
     cout << "\t Best: " << bestScore << endl;
-    // formatName(player.userName);
     cout << "Name: " << player.userName << endl;
     cout << BORDER_COLOR;
     cout << char(218);
@@ -408,6 +368,173 @@ bool isHaveAlpha(string s)
     return check;
 }
 
+void endGameProcess(int **board, int size, user player, user *userList, int numberOfUser, int bestScore, char &choice, bool &isOpenUndo, bool &continuePlayLose)
+{
+    system("cls");
+    cout << RED << "GameOver" << RESET << endl;
+
+    // TODO: THONG BAO THU HANG CUA NGUOI CHOI NEU DAT TOP 20
+    sortScore(userList, numberOfUser);
+
+    for (int i = 0; i < 20; i++)
+    {
+        if (player.score > userList[i].score)
+        {
+            cout << CYAN << "Your rank: " << i + 1 << RESET << endl;
+            break;
+        }
+    }
+
+    if (isOpenUndo == false)
+    {
+        cout << GREEN << "You don't open the undo and redo mode so you can't continue play.\n";
+        cout << RESET;
+        choice = '0';
+        system("pause");
+        return;
+    }
+
+    cout << GREEN << "Do you want to continue (use Undo to continue play)? (press y: yes or n: no)" << RESET << endl;
+    char m;
+    m = getch();
+    while (m != 'y' && m != 'n')
+    {
+        system("cls");
+        cout << RED << "Invalid, please enter choice again (press y: yes or n: no):  " << RESET;
+        m = getch();
+    }
+
+    if (m == 'y')
+    {
+        system("cls");
+        isOpenUndo = true;
+        continuePlayLose = true;
+        printUI(board, size, player, bestScore, isOpenUndo);
+    }
+    else
+    {
+        // TODO: LUU TRU THONG TIN NEU NGUOI CHOI DAT TOP 20
+
+        choice = '0';
+        return;
+    }
+}
+
+void winGameProcess(int **board, int size, user player, user *userList, int numberOfUser, int bestScore, char &choice, bool &isOpenUndo, bool &continuePlayWin)
+{
+    system("cls");
+    cout << YELLOW << "Congratulation! You Win!!" << RESET << endl;
+
+    // TODO: THONG BAO THU HANG CUA NGUOI CHOI NEU DAT TOP 20
+    saveUserList(userList, numberOfUser, player);
+    for (int i = 0; i < numberOfUser; i++)
+    {
+        if (strcmp(userList[i].userName, player.userName) == 0 && i < 20)
+        {
+            cout << CYAN << "Your rank: " << i + 1 << RESET << endl;
+            break;
+        }
+    }
+
+    cout << GREEN << "Do you want to continue? (press y: yes or n: no)" << RESET << endl;
+    char m;
+    m = getch();
+    while (m != 'y' && m != 'n')
+    {
+        system("cls");
+        cout << RED << "Invalid, please enter choice again (press y: yes or n: no):  " << RESET;
+        m = getch();
+    }
+
+    if (m == 'y')
+    {
+        continuePlayWin = true;
+        system("cls");
+        printUI(board, size, player, bestScore, isOpenUndo);
+    }
+    else
+    {
+        // TODO: LUU TRU THONG TIN NGUOI CHOI NEU DAT TOP 20
+
+        choice = '0';
+        return;
+    }
+}
+
+void exitProcess(int **board, int size, user player, user *userList, int numberOfUser, int bestScore, char &choice, bool isOpenUndo, resume *&resumeList)
+{
+    bool isResumed = false;
+    char m;
+
+    for (int i = 0; i < 5; i++)
+    {
+        // formatName(resumeList[i].player.userName);
+        if (strcmp(resumeList[i].player.userName, player.userName) == 0)
+            isResumed = true;
+    }
+
+    if (isResumed == false)
+    {
+        cout << GREEN << "\nDo you want to save the game to resume later? (press y: yes or n: no)" << RESET << endl;
+        m = getch();
+        while (m != 'y' && m != 'n')
+        {
+            // system("cls");
+            cout << RED << "Invalid, please enter choice again (press y: yes or n: no):  \n"
+                 << RESET;
+            m = getch();
+        }
+    }
+    else
+        m = 'y';
+
+    if (m == 'y')
+    {
+        int index = getResumeEmpty(resumeList, player.userName);
+        if (index == -1)
+        {
+            system("cls");
+            printResume(resumeList);
+            cout << GREEN << "\nThe resume is full. Please delete one to save the game: " << RESET;
+            char n;
+            n = getch();
+            while (n != '1' && n != '2' && n != '3' && n != '4' && n != '5')
+            {
+                system("cls");
+                printResume(resumeList);
+                cout << RED << "Invalid, please enter the number of the game you want to delete: " << RESET;
+                n = getch();
+            }
+            changeResume(resumeList, n - '0', board, size, player, isOpenUndo);
+            system("cls");
+            cout << BLUE << "Change the user's resume successfully." << RESET;
+            Sleep(1200);
+            choice = '0';
+            return;
+        }
+        else
+        {
+            changeResume(resumeList, index + 1, board, size, player, isOpenUndo);
+            cout << BLUE << "The game has been saved successfully." << RESET;
+            Sleep(1200);
+            choice = '0';
+            return;
+        }
+    }
+    else
+    {
+        choice = '0';
+        system("cls");
+
+        // if (continuePlayWin == false) // khi da thang ma tiep tuc choi thi khong luu tru thong tin
+        // {
+        //     // TODO: LUU TRU THONG TIN NGUOI CHOI NEU DAT TOP 20
+        // }
+
+        return;
+    }
+}
+
 void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int &bestScore, char &choice, bool isOpenUndo, resume *&resumeList)
 {
     char x;
@@ -430,76 +557,79 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
 
         if (x == 'q')
         {
-            bool isResumed = false;
-            char m;
-
-            for (int i = 0; i < 5; i++)
-            {
-                formatName(resumeList[i].player.userName);
-                if (strcmp(resumeList[i].player.userName, player.userName) == 0)
-                    isResumed = true;
-            }
-
-            if (isResumed == false)
-            {
-                cout << "\nDo you want to save the game to resume later? (press y: yes or n: no)" << endl;
-                m = getch();
-                while (m != 'y' && m != 'n')
-                {
-                    system("cls");
-                    cout << "Invalid, please enter choice again (press y: yes or n: no):  ";
-                    m = getch();
-                }
-            }
-            else
-                m = 'y';
-
-            if (m == 'y')
-            {
-                int index = getResumeEmpty(resumeList, player.userName);
-                if (index == -1)
-                {
-                    system("cls");
-                    printResume(resumeList);
-                    cout << "\nThe resume is full. Please delete one to save the game: ";
-                    char n;
-                    n = getch();
-                    // // while (isHaveAlpha(n) == false || stoi(n) < 1 || stoi(n) > 5)
-                    while (n != '1' && n != '2' && n != '3' && n != '4' && n != '5')
-                    {
-                        system("cls");
-                        printResume(resumeList);
-                        cout << "Invalid, please enter the number of the game you want to delete: ";
-                        n = getch();
-                    }
-                    changeResume(resumeList, n - '0', board, size, player, undo, redo, isOpenUndo);
-                    system("cls");
-                    cout << "Change the user's resume successfully.";
-                    Sleep(1200);
-                    choice = '0';
-                    break;
-                }
-                else
-                {
-                    changeResume(resumeList, index + 1, board, size, player, undo, redo, isOpenUndo);
-                    cout << "The game has been saved successfully.";
-                    Sleep(1200);
-                    choice = '0';
-                    break;
-                }
-            }
-            else
-            {
-                choice = '0';
-                system("cls");
-
-                if (continuePlayWin == false) // khi da thang ma tiep tuc choi thi khong luu tru thong tin
-                {
-                    // TODO: LUU TRU THONG TIN NGUOI CHOI NEU DAT TOP 20
-                }
-
+            exitProcess(board, size, player, userList, numberOfUser, bestScore, choice, isOpenUndo, resumeList);
+            if (choice == '0')
                 break;
-            }
+            // bool isResumed = false;
+            // char m;
+
+            // for (int i = 0; i < 5; i++)
+            // {
+            //     // formatName(resumeList[i].player.userName);
+            //     if (strcmp(resumeList[i].player.userName, player.userName) == 0)
+            //         isResumed = true;
+            // }
+
+            // if (isResumed == false)
+            // {
+            //     cout << GREEN << "\nDo you want to save the game to resume later? (press y: yes or n: no)" << RESET << endl;
+            //     m = getch();
+            //     while (m != 'y' && m != 'n')
+            //     {
+            //         // system("cls");
+            //         cout << RED << "Invalid, please enter choice again (press y: yes or n: no):  \n"
+            //              << RESET;
+            //         m = getch();
+            //     }
+            // }
+            // else
+            //     m = 'y';
+
+            // if (m == 'y')
+            // {
+            //     int index = getResumeEmpty(resumeList, player.userName);
+            //     if (index == -1)
+            //     {
+            //         system("cls");
+            //         printResume(resumeList);
+            //         cout << GREEN << "\nThe resume is full. Please delete one to save the game: " << RESET;
+            //         char n;
+            //         n = getch();
+            //         while (n != '1' && n != '2' && n != '3' && n != '4' && n != '5')
+            //         {
+            //             system("cls");
+            //             printResume(resumeList);
+            //             cout << RED << "Invalid, please enter the number of the game you want to delete: " << RESET;
+            //             n = getch();
+            //         }
+            //         changeResume(resumeList, n - '0', board, size, player, undo, redo, isOpenUndo);
+            //         system("cls");
+            //         cout << BLUE << "Change the user's resume successfully." << RESET;
+            //         Sleep(1200);
+            //         choice = '0';
+            //         break;
+            //     }
+            //     else
+            //     {
+            //         changeResume(resumeList, index + 1, board, size, player, undo, redo, isOpenUndo);
+            //         cout << BLUE << "The game has been saved successfully." << RESET;
+            //         Sleep(1200);
+            //         choice = '0';
+            //         break;
+            //     }
+            // }
+            // else
+            // {
+            //     choice = '0';
+            //     system("cls");
+
+            //     if (continuePlayWin == false) // khi da thang ma tiep tuc choi thi khong luu tru thong tin
+            //     {
+            //         // TODO: LUU TRU THONG TIN NGUOI CHOI NEU DAT TOP 20
+            //     }
+
+            //     break;
+            // }
         }
 
         if (x == 'w')
@@ -544,87 +674,101 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
 
         if (isWinGame(board, size) == true && continuePlayWin == false)
         {
-            system("cls");
-            cout << "Congratulation! You Win!!" << endl;
-
-            // TODO: THONG BAO THU HANG CUA NGUOI CHOI NEU DAT TOP 20
-            saveUserList(userList, numberOfUser, player);
-            for (int i = 0; i < numberOfUser; i++)
-            {
-                if (strcmp(userList[i].userName, player.userName) == 0 && i < 20)
-                {
-                    cout << "Your rank: " << i + 1 << endl;
-                    break;
-                }
-            }
-
-            cout << "Do you want to continue? (press y: yes or n: no)" << endl;
-            char m;
-            m = getch();
-            while (m != 'y' && m != 'n')
-            {
-                system("cls");
-                cout << "Invalid, please enter choice again (press y: yes or n: no):  ";
-                m = getch();
-            }
-
-            if (m == 'y')
-            {
-                continuePlayWin = true;
-                system("cls");
-                printUI(board, size, player, bestScore, isOpenUndo);
-            }
-            else
-            {
-
-                // TODO: LUU TRU THONG TIN NGUOI CHOI NEU DAT TOP 20
-
-                choice = '0';
+            winGameProcess(board, size, player, userList, numberOfUser, bestScore, choice, isOpenUndo, continuePlayWin);
+            if (choice == '0')
                 break;
-            }
+            // system("cls");
+            // cout << YELLOW << "Congratulation! You Win!!" << RESET << endl;
+
+            // // TODO: THONG BAO THU HANG CUA NGUOI CHOI NEU DAT TOP 20
+            // saveUserList(userList, numberOfUser, player);
+            // for (int i = 0; i < numberOfUser; i++)
+            // {
+            //     if (strcmp(userList[i].userName, player.userName) == 0 && i < 20)
+            //     {
+            //         cout << CYAN << "Your rank: " << i + 1 << RESET << endl;
+            //         break;
+            //     }
+            // }
+
+            // cout << GREEN << "Do you want to continue? (press y: yes or n: no)" << RESET << endl;
+            // char m;
+            // m = getch();
+            // while (m != 'y' && m != 'n')
+            // {
+            //     system("cls");
+            //     cout << RED << "Invalid, please enter choice again (press y: yes or n: no):  " << RESET;
+            //     m = getch();
+            // }
+
+            // if (m == 'y')
+            // {
+            //     continuePlayWin = true;
+            //     system("cls");
+            //     printUI(board, size, player, bestScore, isOpenUndo);
+            // }
+            // else
+            // {
+            //     // TODO: LUU TRU THONG TIN NGUOI CHOI NEU DAT TOP 20
+
+            //     choice = '0';
+            //     break;
+            // }
         }
 
         if (isGameEnded(board, size) == true && continuePlayLose == false)
         {
-            system("cls");
-            cout << "GameOver" << endl;
+            // system("cls");
+            // cout << RED << "GameOver" << RESET << endl;
 
-            // TODO: THONG BAO THU HANG CUA NGUOI CHOI NEU DAT TOP 20
-            saveUserList(userList, numberOfUser, player);
-            for (int i = 0; i < numberOfUser; i++)
-            {
-                if (strcmp(userList[i].userName, player.userName) == 0 && i < 20)
-                {
-                    cout << "Your rank: " << i + 1 << endl;
-                    break;
-                }
-            }
+            // // TODO: THONG BAO THU HANG CUA NGUOI CHOI NEU DAT TOP 20
+            // sortScore(userList, numberOfUser);
 
-            cout << "Do you want to continue (use Undo to continue play)? (press y: yes or n: no)" << endl;
-            char m;
-            m = getch();
-            while (m != 'y' && m != 'n')
-            {
-                system("cls");
-                cout << "Invalid, please enter choice again (press y: yes or n: no):  ";
-                m = getch();
-            }
+            // for (int i = 0; i < 20; i++)
+            // {
+            //     if (player.score > userList[i].score)
+            //     {
+            //         cout << CYAN << "Your rank: " << i + 1 << RESET << endl;
+            //         break;
+            //     }
+            // }
 
-            if (m == 'y')
-            {
-                system("cls");
-                isOpenUndo = true;
-                continuePlayLose = true;
-                printUI(board, size, player, bestScore, isOpenUndo);
-            }
-            else
-            {
+            // if (isOpenUndo == false)
+            // {
+            //     cout << GREEN << "You don't open the undo and redo mode so you can't continue play.\n"
+            //          << RESET;
+            //     system("pause");
+            //     choice = '0';
+            //     break;
+            // }
 
-                // TODO: LUU TRU THONG TIN NEU NGUOI CHOI DAT TOP 20
+            // cout << GREEN << "Do you want to continue (use Undo to continue play)? (press y: yes or n: no)" << RESET << endl;
+            // char m;
+            // m = getch();
+            // while (m != 'y' && m != 'n')
+            // {
+            //     system("cls");
+            //     cout << RED << "Invalid, please enter choice again (press y: yes or n: no):  " << RESET;
+            //     m = getch();
+            // }
 
-                choice = '0';
+            // if (m == 'y')
+            // {
+            //     system("cls");
+            //     isOpenUndo = true;
+            //     continuePlayLose = true;
+            //     printUI(board, size, player, bestScore, isOpenUndo);
+            // }
+            // else
+            // {
+            //     // TODO: LUU TRU THONG TIN NEU NGUOI CHOI DAT TOP 20
+
+            //     choice = '0';
+            //     break;
+            // }
+            endGameProcess(board, size, player, userList, numberOfUser, bestScore, choice, isOpenUndo, continuePlayLose);
+            if (choice == '0')
                 break;
-            }
         }
     }
 
@@ -636,7 +780,6 @@ void playGame(Stack &undo, Stack &redo, int **board, int size, user &player, int
 void startMenu(char &choice, int &size, user &player, user *userList, int numberOfUser, bool &isOpenUndo, resume *&resumeList, int &index)
 {
     system("cls");
-    cout << "" << endl;
     cout << "WELCOME TO 2048!!!" << endl;
     cout << "   1. Resume" << endl;
     cout << "   2. Play a New Game" << endl;
@@ -646,9 +789,8 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
     cout << "Enter Choice (press number and enter): ";
 
     // enter again when press another
-    
+
     choice = getch();
-    // //while (isHaveAlpha(choice_s) == false || stoi(choice_s) < 1 || stoi(choice_s) > 5)
     while (choice != '1' && choice != '2' && choice != '3' && choice != '4' && choice != '5')
 
     {
@@ -659,7 +801,7 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
         cout << "   3. Top 20" << endl;
         cout << "   4. Setting" << endl;
         cout << "   5. Exit" << endl;
-        cout << "Invalid, please enter choice again: ";
+        cout << RED << "Invalid, please enter choice again: " << RESET;
         choice = getch();
     }
 
@@ -667,7 +809,8 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
     if (choice == '5')
     {
         system("cls");
-        cout << "Thank you and have a good day!!!\n";
+        cout << YELLOW << "Thank you and have a good day!!!\n"
+             << RESET;
         return;
     }
 
@@ -698,8 +841,8 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
         system("cls");
 
         printResume(resumeList);
-        cout << "\n6. Exit\n";
         cout << "Enter the number of the game you want to resume: ";
+
         string m;
         m = getch();
         resumeList[5].size = -1;
@@ -708,9 +851,7 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
         {
             system("cls");
             printResume(resumeList);
-            cout << "\n6. Exit\n";
-
-            cout << "Invalid, please enter the number of the game you want to resume again: ";
+            cout << RED << "Invalid, please enter the number of the game you want to resume again: " << RESET;
             m = getch();
         }
 
@@ -719,7 +860,7 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
         system("cls");
         if (index != 6)
         {
-            cout << "Resume the game successfully ";
+            cout << BLUE << "Resume the game successfully " << RESET;
             Sleep(1200);
         }
         system("cls");
@@ -734,16 +875,20 @@ void settingGame(int &size, bool &isOpenUndo)
     cout << "1. Change the size game board.\n";
     cout << "2. Open the undo and redo.\n";
     cout << "3. Exit.\n";
+    cout << "\n Enter choice: ";
 
     char choice;
     while (true)
     {
         choice = getch();
-        // // while (isHaveAlpha(choice_s) == false || stoi(choice_s) < 1 || stoi(choice_s) > 3)
         while (choice != '1' && choice != '2' && choice != '3')
         {
             system("cls");
-            cout << "Invalid! Please choice again: ";
+            cout << "Settings Game.\n";
+            cout << "1. Change the size game board.\n";
+            cout << "2. Open the undo and redo.\n";
+            cout << "3. Exit.\n\n";
+            cout << RED << "Invalid! Please choice again: " << RESET;
             choice = getch();
         }
 
@@ -753,19 +898,19 @@ void settingGame(int &size, bool &isOpenUndo)
         if (choice == '1')
         {
             system("cls");
-            cout << "Enter gameboard size (from 4x4 to 10x10): ";
+            cout << GREEN << "Enter gameboard size (from 4x4 to 10x10): " << RESET;
             string size_s;
             cin >> size_s;
 
             while (isHaveAlpha(size_s) == false || stoi(size_s) < 4 || stoi(size_s) > 10)
             {
                 system("cls");
-                cout << "Invalid, please enter gameboard size again: ";
+                cout << RED << "Invalid, please enter gameboard (from 4x4 to 10x10) size again: " << RESET;
                 cin >> size_s;
             }
 
             size = stoi(size_s);
-            cout << "The gameboard size has been changed ";
+            cout << BLUE << "The gameboard size has been changed " << RESET;
             Sleep(1200);
 
             system("cls");
@@ -773,18 +918,20 @@ void settingGame(int &size, bool &isOpenUndo)
             cout << "1. Change the size game board.\n";
             cout << "2. Open the undo and redo.\n";
             cout << "3. Exit.\n";
+            cout << "\n Enter choice: ";
         }
 
         if (choice == '2')
         {
             system("cls");
-            cout << "Do you want to open undo and redo mode? (press y : yes or n : no)\n";
+            cout << GREEN << "Do you want to open undo and redo mode? (press y : yes or n : no)\n"
+                 << RESET;
             char tmp;
             tmp = getch();
             while (tmp != 'y' && tmp != 'n')
             {
                 system("cls");
-                cout << "Invalid, please enter again: ";
+                cout << RED << "Invalid, please enter the undo and redo mode again (press y : yes or n : no): " << RESET;
                 tmp = getch();
             }
 
@@ -792,14 +939,14 @@ void settingGame(int &size, bool &isOpenUndo)
             {
                 isOpenUndo = true;
                 system("cls");
-                cout << "Undo and Redo was opened ";
+                cout << BLUE << "Undo and Redo was opened " << RESET;
                 Sleep(1200);
             }
             else
             {
                 isOpenUndo = false;
                 system("cls");
-                cout << "Undo and Redo was closed ";
+                cout << BLUE << "Undo and Redo was closed " << RESET;
                 Sleep(1200);
             }
             system("cls");
@@ -807,6 +954,7 @@ void settingGame(int &size, bool &isOpenUndo)
             cout << "1. Change the size game board.\n";
             cout << "2. Open the undo and redo.\n";
             cout << "3. Exit.\n";
+            cout << "\n Enter choice: ";
         }
     }
 }
