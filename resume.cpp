@@ -1,9 +1,9 @@
-#include "2048.h"
+#include "headers/2048.h"
 
 void loadResumeFile(resume *&resumeList)
 {
     fstream input;
-    string file = "RESUME_FILE";
+    string file = ".\\binary_files\\RESUME_FILE";
     for (int i = 0; i < 5; i++)
     {
         input.open(file + to_string(i) + ".bin", ios::in | ios::binary);
@@ -15,7 +15,7 @@ void loadResumeFile(resume *&resumeList)
 void saveResume(resume *resumeList)
 {
     fstream output;
-    string file = "RESUME_FILE";
+    string file = ".\\binary_files\\RESUME_FILE";
     for (int i = 0; i < 5; i++)
     {
         output.open(file + to_string(i) + ".bin", ios::out | ios::binary);
@@ -54,7 +54,6 @@ void printResume(resume *resumeList)
             cout << "Empty" << endl;
         else
         {
-            // formatName(resumeList[i].player.userName);
             cout << resumeList[i].player.userName << endl;
         }
     }

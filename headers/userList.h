@@ -4,7 +4,7 @@
 #include "2048.h"
 
 
-#define LIST_USER_FILE "user_list.bin"
+#define LIST_USER_FILE ".\\binary_files\\user_list.bin"
 #define MAX_NAME_LENGTH 31 // 30 characters + null terminator
 
 struct user

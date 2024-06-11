@@ -3,12 +3,6 @@
 
 #include "2048.h"
 
-#define RESUME_FILE1 "resume1.bin"
-#define RESUME_FILE2 "resume2.bin"
-#define RESUME_FILE3 "resume3.bin"
-#define RESUME_FILE4 "resume4.bin"
-#define RESUME_FILE5 "resume5.bin"
-
 struct resume
 {
     int board[10][10];

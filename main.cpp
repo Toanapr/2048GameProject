@@ -1,11 +1,10 @@
-#include "2048.h"
+#include "headers/2048.h"
 
 
 int main()
 {
 
 
-    // system("cls");
     srand(time(0));
 
     int **board;
@@ -45,15 +44,18 @@ int main()
                 for (int j = 0; j < resumeList[index - 1].size; j++)
                     board[i][j] = resumeList[index - 1].board[i][j];
             player = resumeList[index - 1].player;
+           
             int timeBefore = player.playingTime;
 
             printUI(board, resumeList[index - 1].size, player, bestScore, false);
             playGame(undo, redo, board, resumeList[index - 1].size, player, bestScore, choice, false, resumeList);
+
             player.playingTime += timeBefore;
+            resumeList[index - 1].player = player;
             saveResume(resumeList);
 
             bool isExist = isExistUserName(userList, numberOfUser, player.userName);
-
+            
             if (!isExist)
             {
                 saveUserList(userList, numberOfUser, player);
@@ -61,6 +63,13 @@ int main()
             }
             else
             {
+                int cnt = (numberOfUser > 20) ? 20 : numberOfUser;
+                for (int i = 0; i < cnt; i++)
+                    if (strcmp(userList[i].userName, player.userName) == 0)
+                    {
+                        userList[i] = player;
+                    }
+            
                 addUserInFile(loadUser, userList, (numberOfUser > 20) ? 20 : numberOfUser);
             }
 

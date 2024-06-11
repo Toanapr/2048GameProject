@@ -1,4 +1,4 @@
-#include "2048.h"
+#include "headers/2048.h"
 
 int countNumberOfUser(std::fstream &input)
 {
@@ -9,7 +9,6 @@ int countNumberOfUser(std::fstream &input)
     int end = input.tellg();
 
     input.close();
-    // cout << end << " " << begin << " " << sizeof(user);
     return (end - begin) / sizeof(user);
 }
 
