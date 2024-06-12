@@ -1,6 +1,7 @@
 #include "headers/2048.h"
 
-int countNumberOfUser(std::fstream &input)
+// dem so luong user trong file
+int countNumberOfUser(std::fstream &input) 
 {
     input.open(LIST_USER_FILE, ios::in);
 
@@ -12,14 +13,16 @@ int countNumberOfUser(std::fstream &input)
     return (end - begin) / sizeof(user);
 }
 
-void loadFileUserList(std::fstream &input, user *&listUser, int numberOfUser)
+// load user tu file ve mang
+void loadFileUserList(std::fstream &input, user *&listUser, int numberOfUser) 
 {
     input.open(LIST_USER_FILE, ios::in | ios::binary);
     input.read((char *)listUser, sizeof(user) * numberOfUser);
     input.close();
 }
 
-void addUserInFile(std::fstream &output, user *listUser, int numberOfUser)
+// luu mang user len file
+void addUserInFile(std::fstream &output, user *listUser, int numberOfUser) 
 {
     output.open(LIST_USER_FILE, ios::out | ios::binary);
     output.write((char *)listUser, sizeof(user) * numberOfUser);
@@ -45,18 +48,11 @@ void sortScore(user *&listUser, int numberOfUser)
         }
 }
 
-void formatName(char *name)
-{
-    char *pos = strchr(name, '*');
-    if (pos)
-        *pos = '\0';
-}
-
-bool isExistUserName(user *listUser, int numberOfUser, const char *name)
+// ham kiem tra co ton tai user trong mang user chua
+bool isExistUserName(user *listUser, int numberOfUser, const char *name) 
 {
     for (int i = 0; i < numberOfUser; i++)
     {
-        // formatName(listUser[i].userName);
         if (strcmp(name, listUser[i].userName) == 0)
             return true;
     }
@@ -64,7 +60,8 @@ bool isExistUserName(user *listUser, int numberOfUser, const char *name)
     return false;
 }
 
-void normalize(char *name)
+// chuan hoa lai ten nguoi dung nhap vao (nhap du dau cach o dau, cuoi, giua cac ki tu)
+void normalize(char *name) 
 {
     int len = strlen(name);
     int start = 0, end = len - 1;
@@ -93,32 +90,35 @@ void normalize(char *name)
     *dest = '\0';
 }
 
-bool isValidName(const char *name)
+// kiem tra ten nhap vao co dung yeu cau chua
+bool isValidName(const char *name) 
 {
     int sizeName = strlen(name);
 
-    if (sizeName < 6 || sizeName > 30)
+    if (sizeName < 6 || sizeName > 30) // do dai ten lon hon 6 va nho hon 30 ki tu
         return false;
 
     for (int i = 0; i < sizeName; i++)
-        if (!(name[i] == '_' || isalpha(name[i]) || isdigit(name[i]) || name[i] == ' '))
+        if (!(name[i] == '_' || isalpha(name[i]) || isdigit(name[i]) || name[i] == ' ')) // chi duoc chua dau "_", so va dau cach
             return false;
 
     return true;
 }
 
-void enterUserName(user *listUser, int numberOfUser, char *name)
+// ham nhap ten
+void enterUserName(user *listUser, int numberOfUser, char *name) 
 {
     fstream loadResume;
     resume *resumeList = new resume[5];
     loadResumeFile(resumeList);
 
-    std::cout << "Enter the name (Note: name from 6 to 30 characters including lowercase letters, uppercase letters, numbers, spaces and the character _): ";
+    std::cout << "Enter the name (Note: name from 6 to 30 characters including lowercase letters, uppercase letters, numbers, spaces and the character _ ): ";
     cout << BLUE;
     std::cin.getline(name, MAX_NAME_LENGTH);
     cout << RESET;
     normalize(name);
 
+    // kiem tra tinh trung lap va ten da dung yeu cau hay chua (neu sai thi nhap lai)
     while (isExistUserName(listUser, numberOfUser, name) || !isValidName(name) || isExistResume(resumeList, name))
     {
         system("cls");
@@ -129,9 +129,6 @@ void enterUserName(user *listUser, int numberOfUser, char *name)
         cout << RESET;
         normalize(name);
     }
-
-    // while (strlen(name) < 30)
-    //     strcat(name, "*");
 }
 
 void printTop20Score(user *listUser, int numberOfUser)
@@ -155,9 +152,8 @@ void printTop20Score(user *listUser, int numberOfUser)
 
     for (int i = 0; i < numberOfUser; i++)
     {
-        // formatName(listUser[i].userName);
         std::cout << std::setw(5) << i + 1;
-        if (i < 3)
+        if (i < 3) // in mau khac doi voi top 3
             cout << "\033[0;34m";
         else 
             cout << "\033[0;36m";
@@ -169,7 +165,8 @@ void printTop20Score(user *listUser, int numberOfUser)
     cout << std::right;
 }
 
-std::string getTime(int time)
+// dua thoi gian va dang hh::mm:ss
+std::string getTime(int time) 
 {
     std::string res;
 
@@ -182,7 +179,8 @@ std::string getTime(int time)
     return res;
 }
 
-void saveUserList(user *&listUser, int &numberOfUser, user player)
+// them moi player vao mang listUser
+void saveUserList(user *&listUser, int &numberOfUser, user player) 
 {
     std::fstream output;
     numberOfUser++;
@@ -191,5 +189,4 @@ void saveUserList(user *&listUser, int &numberOfUser, user player)
     loadFileUserList(output, listUser, numberOfUser);
     listUser[numberOfUser - 1] = player;
     sortScore(listUser, numberOfUser);
-    // addUserInFile(output, listUser, (numberOfUser > 20) ? 20 : numberOfUser);
 }

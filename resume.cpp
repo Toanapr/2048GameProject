@@ -1,5 +1,6 @@
 #include "headers/2048.h"
 
+// luu mang resumeList vao 5 fine bin
 void loadResumeFile(resume *&resumeList)
 {
     fstream input;
@@ -12,6 +13,7 @@ void loadResumeFile(resume *&resumeList)
     }
 }
 
+// lay du lieu xuong tu file
 void saveResume(resume *resumeList)
 {
     fstream output;
@@ -24,6 +26,7 @@ void saveResume(resume *resumeList)
     }
 }
 
+// ham nay tra ve vi tri nguoi choi co ten "name" hoac tra ve vi tri con trong trong resume
 int getResumeEmpty(resume *resumeList, char *name)
 {
     for (int i = 0; i < 5; i++)
@@ -36,6 +39,7 @@ int getResumeEmpty(resume *resumeList, char *name)
     return -1;
 }
 
+// ham cap nhat lai thong tin player trong resumeList
 void changeResume(resume *&resumeList, int index, int **board, int size, user player)
 {
     resumeList[index - 1].size = size;
@@ -59,6 +63,8 @@ void printResume(resume *resumeList)
     }
     cout << "\n6. Exit\n";
 }
+
+// kiem tra player da xuat hien trong resumeList chua
 bool isExistResume(resume *resumeList, char *name)
 {
     for (int i = 0; i < 5; i++)

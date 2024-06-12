@@ -11,11 +11,11 @@ struct resume
 
     resume()
     {
-        board[10][10];
-        size = 0;
-        player.userName[0] = '\0';
-        player.score = 0;
-        player.playingTime = 0;
+        this->board[10][10];
+        this->size = 0;
+        this->player.userName[0] = '\0';
+        this->player.score = 0;
+        this->player.playingTime = 0;
     }
 };
 

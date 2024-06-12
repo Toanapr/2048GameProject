@@ -16,7 +16,7 @@ void moveLeft(int **board, int size, bool &canMove, int &score)
         {
             int temp = j + 1;
 
-            while (temp < size && board[i][temp] == 0)
+            while (temp < size && board[i][temp] == 0) // tim vi tri cac o con trong de don
             {
                 temp++;
             }
@@ -24,18 +24,18 @@ void moveLeft(int **board, int size, bool &canMove, int &score)
             if (temp >= size)
                 break;
 
-            if (board[i][j] == 0)
+            if (board[i][j] == 0) // neu o trong thi don qua
             {
                 swap(&board[i][j], &board[i][temp]);
                 j--;
                 canMove = true;
             }
-            else if (board[i][j] == board[i][temp])
+            else if (board[i][j] == board[i][temp]) // neu giong nhau thi hop nhat 
             {
-                board[i][j] *= 2;
-                board[i][temp] = 0;
+                board[i][j] *= 2; // hop nhat
+                board[i][temp] = 0; // cap nhat lai o khi da hop nhat
                 canMove = true;
-                score += board[i][j];
+                score += board[i][j]; // cap nhat lai diem
             }
         }
     }

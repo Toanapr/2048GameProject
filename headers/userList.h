@@ -15,9 +15,9 @@ struct user
 
     user()
     {
-        userName[0] = '\0';
-        score = 0;
-        playingTime = 0;
+        this->userName[0] = '\0';
+        this->score = 0;
+        this->playingTime = 0;
     }
 };
 

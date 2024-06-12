@@ -1,5 +1,6 @@
 #include "headers/2048.h"
 
+// random 2, 4 voi ti le 20%, 80%
 int randomTwoFour()
 {
     int x = rand() % 10 + 1;
@@ -9,6 +10,7 @@ int randomTwoFour()
         return 4;
 }
 
+// lay bestScore tu file
 int getBestScore(fstream &input)
 {
     int hi;
@@ -18,6 +20,7 @@ int getBestScore(fstream &input)
     return hi;
 }
 
+// luu bestScore lai vo file
 void saveBestScore(fstream &output, int score, int bestScore)
 {
     output.open(fileBestScore, ios::out | ios::binary);
@@ -30,12 +33,13 @@ void saveBestScore(fstream &output, int score, int bestScore)
     output.close();
 }
 
+// random 2,4 vao o trong trong bang
 void placeRandomValueOnEmptyCell(int **board, int size)
 {
     int pos1 = rand() % size;
     int pos2 = rand() % size;
 
-    while (board[pos1][pos2] != 0 && countEmptyPosition(board, size) > 0)
+    while (board[pos1][pos2] != 0 && countEmptyPosition(board, size) > 0) // neu o do da ton tai thi random lai
     {
         pos1 = rand() % size;
         pos2 = rand() % size;
@@ -44,16 +48,16 @@ void placeRandomValueOnEmptyCell(int **board, int size)
     board[pos1][pos2] = randomTwoFour();
 }
 
+// in bang choi
 void printUI(int **board, int size, user player, int &bestScore, bool isOpenUndo)
 {
     if (board == NULL)
         return;
 
-    if (bestScore < player.score)
+    if (bestScore < player.score) // cap nhat lai bestScore neu nguoi choi lon diem hon
         bestScore = player.score;
 
     // Define color codes
-    // const string RESET = "\033[0m";
     const char BOARD = 196;
     const string BORDER_COLOR = "\033[33m";
     const string COLORS[] = {
@@ -71,9 +75,12 @@ void printUI(int **board, int size, user player, int &bestScore, bool isOpenUndo
         "\033[33;41m",
     };
 
+    // in thong tin
     cout << BOLD << "Score: " << RESET << GREEN << player.score << RESET;
     cout << BOLD << "\t Best: " << YELLOW << bestScore << RESET << endl;
     cout << BOLD << "Name: " << BLUE << player.userName << RESET << endl;
+
+    // ve bang
     cout << BORDER_COLOR;
     cout << char(218);
     for (int k = 0; k < size - 1; k++)
@@ -157,10 +164,12 @@ void printUI(int **board, int size, user player, int &bestScore, bool isOpenUndo
     }
 
     cout << RESET;
+
+    // in huong dan cac phim choi
     if (isOpenUndo == true)
     {
-        cout << "\033[1;36m  w \033[0m : Up   \033[1;36m a \033[0m : Left \n \033[1;36m s \033[0m : Down \033[1;36m d \033[0m : Right \n \033[1;36m e \033[0m : exit \033[1;36m  u \033[0m : undo \n \033[1;36m r \033[0m : redo\n" << RESET;
-        cout << "\nPress the key to play and continue.";
+        cout << "\033[1;36m  w \033[0m : Up   \033[1;36m a \033[0m : Left \n \033[1;36m s \033[0m : Down \033[1;36m d \033[0m : Right \n \033[1;36m e \033[0m : exit \033[1;36m u \033[0m : undo \n \033[1;36m r \033[0m : redo\n" << RESET;
+        cout << "\nPress the key to play and continue.\n";
     }
     else
     {
@@ -169,6 +178,7 @@ void printUI(int **board, int size, user player, int &bestScore, bool isOpenUndo
     }
 }
 
+// khoi tao mot new game
 void initializeGame(Stack &undo, int **&board, int &size, user &player, int bestScore, bool isOpenUndo)
 {
     player.score = 0;
@@ -183,6 +193,7 @@ void initializeGame(Stack &undo, int **&board, int &size, user &player, int best
     undo.push(data);
 }
 
+// xu ly undo
 void undoProcess(Stack &undo, Stack &redo, int **&board, int size, int &score)
 {
     if (undo.top()->pNext == NULL)
@@ -191,19 +202,21 @@ void undoProcess(Stack &undo, Stack &redo, int **&board, int size, int &score)
     redo.push(undo.top()->data);
     undo.pop();
     Node *temp = undo.top();
-    copyValueMatrix(temp->data.matrix, board, size);
+    copyValueMatrix(temp->data.matrix, board, size); // sao chep value cua matrix vao board
     score = temp->data.score;
 }
 
+// xu ly redo
 void redoProcess(Stack &undo, Stack &redo, int **&board, int size, int &score)
 {
     Node *temp = redo.top();
     undo.push(temp->data);
-    copyValueMatrix(temp->data.matrix, board, size);
+    copyValueMatrix(temp->data.matrix, board, size); // sao chep value cua matrix vao board
     score = temp->data.score;
     redo.pop();
 }
 
+// ham kiem tra co ki tu la chu cai khong
 bool isHaveAlpha(string s)
 {
     bool check = true;
@@ -213,6 +226,7 @@ bool isHaveAlpha(string s)
     return check;
 }
 
+// in menu bat dau
 void startMenu(char &choice, int &size, user &player, user *userList, int numberOfUser, bool &isOpenUndo, resume *&resumeList, int &index)
 {
     system("cls");
@@ -265,6 +279,7 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
         system("pause");
     }
 
+    // setting game
     if (choice == '4')
     {
         system("cls");
@@ -282,7 +297,6 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
         string m;
         m = getch();
         resumeList[5].size = -1;
-        // while (m != '1' && m != '2' && m != '3' && m != '4' && m != '5' && m != '6' && resumeList[m - '0' - 1].size == 0)
         while (isHaveAlpha(m) == false || stoi(m) < 1 || stoi(m) > 7 || resumeList[stoi(m) - 1].size == 0)
         {
             system("cls");
@@ -305,6 +319,7 @@ void startMenu(char &choice, int &size, user &player, user *userList, int number
     system("cls");
 }
 
+// chuc nang setting game
 void settingGame(int &size, bool &isOpenUndo)
 {
     cout << YELLOW << "Settings Game.\n" << RESET;
@@ -385,6 +400,7 @@ void settingGame(int &size, bool &isOpenUndo)
                 cout << BLUE << "Undo and Redo was closed " << RESET;
                 Sleep(1200);
             }
+            
             system("cls");
             cout << YELLOW << "Settings Game.\n" << RESET;
             cout << "1. Change the size game board.\n";
